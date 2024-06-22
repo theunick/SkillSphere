@@ -1,11 +1,11 @@
-<%= form_with(model: course) do |form| %>
-  <% if course.errors.any? %>
+<!-- app/views/courses/_form.html.erb -->
+<%= form_with(model: @course, local: true) do |form| %>
+  <% if @course.errors.any? %>
     <div id="error_explanation">
-      <h2><%= pluralize(course.errors.count, "error") %> prohibited this course from being saved:</h2>
-
+      <h2><%= pluralize(@course.errors.count, "error") %> prohibited this course from being saved:</h2>
       <ul>
-        <% course.errors.each do |error| %>
-          <li><%= error.full_message %></li>
+        <% @course.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
         <% end %>
       </ul>
     </div>
@@ -27,8 +27,13 @@
   </div>
 
   <div class="field">
-    <%= form.label :seller_id %>
-    <%= form.text_field :seller_id %>
+    <%= form.label :description %>
+    <%= form.text_area :description %>
+  </div>
+
+  <div class="field">
+    <%= form.label :price %>
+    <%= form.number_field :price %>
   </div>
 
   <div class="actions">
