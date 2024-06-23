@@ -1,8 +1,8 @@
 # app/controllers/courses_controller.rb
 class CoursesController < ApplicationController
-  before_action :authenticate_seller!
-  before_action :set_course, only: %i[ show edit update destroy ]
-  before_action :authorize_seller!, only: %i[ edit update destroy ]
+  #before_action :authenticate_seller!
+  #before_action :set_course, only: %i[ show edit update destroy ]
+  #before_action :authorize_seller!, only: %i[ edit update destroy ]
 
   # GET /courses or /courses.json
   def index
@@ -15,7 +15,7 @@ class CoursesController < ApplicationController
 
   # GET /courses/new
   def new
-    @course = current_seller.courses.build
+    @course = Course.new
   end
 
   # GET /courses/1/edit
@@ -24,7 +24,7 @@ class CoursesController < ApplicationController
 
   # POST /courses or /courses.json
   def create
-    @course = current_seller.courses.build(course_params)
+    @course = Course.new(course_params)
 
     respond_to do |format|
       if @course.save
