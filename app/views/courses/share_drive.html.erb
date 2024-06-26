@@ -1,0 +1,27 @@
+<!-- app/views/courses/share_drive.html.erb -->
+<h1>Google Drive Files</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @files.each do |file| %>
+      <tr>
+        <td><%= file.name %></td>
+        <td><%= file.mime_type %></td>
+        <td>
+          <%= link_to 'View', file.web_view_link, target: '_blank' %>
+          <%= link_to 'Download', file.web_content_link, target: '_blank' %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= link_to 'Back to Course', course_path(@course) %>
+

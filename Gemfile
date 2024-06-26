@@ -46,12 +46,20 @@ end
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
-gem 'omniauth-github', github: 'omniauth/omniauth-github', branch: 'master'
-
 gem 'omniauth-rails_csrf_protection'
 
 gem 'figaro'
 
 gem 'canard', '~> 0.6.2.pre'
 
-gem 'devise'
+gem 'devise' 
+
+gem 'omniauth', '~> 2.0'
+
+gem 'google-api-client', '~> 0.53.0'
+
+gem 'omniauth-google-oauth2', '~> 1.0'
+
+gem 'dotenv-rails', groups: [:development, :test]
+
+

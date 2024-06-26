@@ -1,9 +1,7 @@
+<!-- app/views/courses/show.html.erb -->
 <p id="notice"><%= notice %></p>
 
-<p>
-  <strong>Title:</strong>
-  <%= @course.title %>
-</p>
+<h1><%= @course.title %></h1>
 
 <p>
   <strong>Code:</strong>
@@ -16,9 +14,27 @@
 </p>
 
 <p>
-  <strong>Seller:</strong>
-  <%= @course.seller_id %>
+  <strong>Description:</strong>
+  <%= @course.description %>
 </p>
+
+<p>
+  <strong>Price:</strong>
+  <%= @course.price %>
+</p>
+
+<h2>Upload File</h2>
+<%= form_with url: upload_file_course_path(@course), local: true, method: :post, multipart: true do %>
+  <div class="field">
+    <%= file_field_tag :file %>
+  </div>
+  <div class="actions">
+    <%= submit_tag "Upload" %>
+  </div>
+<% end %>
+
+<h2>Google Drive Files</h2>
+<%= link_to 'Access Google Drive', share_drive_course_path(@course) %>
 
 <%= link_to 'Edit', edit_course_path(@course) %> |
 <%= link_to 'Back', courses_path %>
