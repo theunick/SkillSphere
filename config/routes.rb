@@ -1,4 +1,13 @@
+# config/routes.rb
 Rails.application.routes.draw do
+
+  resources :courses do
+    member do
+      post 'upload_file'
+      get 'share_drive'
+    end
+  end
+
   get 'home/index'
   root 'home#index'
   resources :courses
@@ -11,6 +20,10 @@ Rails.application.routes.draw do
 
   get 'bought_courses', to: 'courses#bought', as: 'bought_courses'
   get 'uploaded_courses', to: 'courses#uploaded', as: 'uploaded_courses'
+  
+  get '/auth/:provider/callback' => 'session#create'
+  get '/auth/failure' => 'session#fail'
+  get '/session/destroy' => 'session#destroy'
 
   # Defines the root path route ("/")
   # root "posts#index"
