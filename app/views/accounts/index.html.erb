@@ -3,6 +3,8 @@
   <thead>
     <tr>
       <th>ID</th>
+      <th>Name</th>
+      <th>Surname</th>
       <th>Email</th>
       <th>Role</th>
       <th>Actions</th>
@@ -12,6 +14,8 @@
     <% @accounts.each do |account| %>
       <tr>
         <td><%= account.id %></td>
+        <td><%= account.name %></td>
+        <td><%= account.surname %></td>
         <td><%= account.email %></td>
         <td><%= account.role %></td>
         <td><%= link_to 'Show', account_path(account) %></td>

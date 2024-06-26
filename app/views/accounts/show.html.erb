@@ -12,3 +12,9 @@
   <%= @account.role %>
 </p>
 <%= link_to 'Back', accounts_path %>
+
+<% if current_account.role == 0 %>
+  <%= link_to 'Corsi comprati', bought_courses_path %>
+<% elsif current_account.role == 1 %>
+  <%= link_to 'Corsi caricati', uploaded_courses_path %>
+<% end %>
