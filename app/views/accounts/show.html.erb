@@ -17,4 +17,9 @@
   <%= link_to 'Corsi comprati', bought_courses_path %>
 <% elsif current_account.role == 1 %>
   <%= link_to 'Corsi caricati', uploaded_courses_path %>
+<% elsif current_account.role == 2 %>
+  <%= 
+    link_to 'Corsi segnalati', reported_courses_path
+    link_to 'Lista utenti', all_users_path
+  %>
 <% end %>
