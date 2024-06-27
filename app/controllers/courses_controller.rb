@@ -26,6 +26,7 @@ class CoursesController < ApplicationController
   # POST /courses or /courses.json
   def create
     @course = Course.new(course_params)
+    @course.seller = current_seller
 
     if @course.save
       redirect_to @course, notice: 'Course was successfully created.'
@@ -36,6 +37,7 @@ class CoursesController < ApplicationController
 
   # PATCH/PUT /courses/1 or /courses/1.json
   def update
+    @course.seller = current_seller
     if @course.update(course_params)
       redirect_to @course, notice: 'Course was successfully updated.'
     else
@@ -99,6 +101,6 @@ class CoursesController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def course_params
-    params.require(:course).permit(:title, :code, :category, :description, :price, :file)
+    params.require(:course).permit(:title, :code, :category, :description, :seller_id)
   end
 end
