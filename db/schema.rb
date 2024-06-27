@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_06_27_123057) do
+ActiveRecord::Schema.define(version: 2024_06_27_164000) do
 
   create_table "accounts", force: :cascade do |t|
     t.string "email"
@@ -28,6 +28,7 @@ ActiveRecord::Schema.define(version: 2024_06_27_123057) do
     t.integer "seller_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "description"
     t.index ["seller_id"], name: "index_courses_on_seller_id"
   end
 
