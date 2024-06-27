@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_06_25_180734) do
+ActiveRecord::Schema.define(version: 2024_06_27_123057) do
 
   create_table "accounts", force: :cascade do |t|
     t.string "email"
@@ -31,6 +31,16 @@ ActiveRecord::Schema.define(version: 2024_06_25_180734) do
     t.index ["seller_id"], name: "index_courses_on_seller_id"
   end
 
+  create_table "reports", force: :cascade do |t|
+    t.integer "account_id", null: false
+    t.integer "course_id", null: false
+    t.string "message"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["account_id"], name: "index_reports_on_account_id"
+    t.index ["course_id"], name: "index_reports_on_course_id"
+  end
+
   create_table "reviews", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "course_id", null: false
@@ -43,6 +53,8 @@ ActiveRecord::Schema.define(version: 2024_06_25_180734) do
   end
 
   add_foreign_key "courses", "sellers"
+  add_foreign_key "reports", "accounts"
+  add_foreign_key "reports", "courses"
   add_foreign_key "reviews", "courses"
   add_foreign_key "reviews", "users"
 end
