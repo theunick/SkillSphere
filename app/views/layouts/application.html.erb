@@ -10,6 +10,11 @@
   </head>
 
   <body>
+    <nav>
+      <%= link_to 'Home', root_path, class: 'navbar-home-button' %>
+      <%= link_to 'Report', new_report_path %>
+      <%= link_to 'New Course', new_course_path %>
+    </nav>
     <%= yield %>
   </body>
 </html>

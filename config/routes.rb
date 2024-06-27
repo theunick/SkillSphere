@@ -1,6 +1,7 @@
 # config/routes.rb
 Rails.application.routes.draw do
 
+  devise_for :users
   resources :courses do
     member do
       post 'upload_file'
@@ -25,6 +26,10 @@ Rails.application.routes.draw do
   get '/auth/:provider/callback' => 'session#create'
   get '/auth/failure' => 'session#fail'
   get '/session/destroy' => 'session#destroy'
+
+  resource :account, only: [:show, :index] do
+    post 'create_assistance', on: :member
+  end
 
   # Defines the root path route ("/")
   # root "posts#index"
