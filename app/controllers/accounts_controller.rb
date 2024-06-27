@@ -3,6 +3,7 @@ class AccountsController < ApplicationController
   
     def index
       @accounts = Account.all
+      @assistance = Assistance.new
     end
   
     def show
@@ -47,5 +48,24 @@ class AccountsController < ApplicationController
   
     def account_params
       params.require(:account).permit(:email, :name, :surname, :role)
+    end
+
+    def assistance
+      @assistance = Assistance.new
+    end
+  
+    def create_assistance
+      @assistance = current_user.assistances.build(assistance_params)
+      if @assistance.save
+        redirect_to account_path, notice: 'Assistance request submitted successfully.'
+      else
+        render :index
+      end
+    end
+  
+    private
+  
+    def assistance_params
+      params.require(:assistance).permit(:message)
     end
 end  

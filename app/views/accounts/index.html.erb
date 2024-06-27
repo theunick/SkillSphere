@@ -22,3 +22,15 @@
     <% end %>
   </tbody>
 </table>
+
+<h2>Request Assistance</h2>
+<%= form_with model: @assistance, url: create_assistance_account_path do |form| %>
+  <div class="field">
+    <%= form.label :message %>
+    <%= form.text_area :message %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit 'Submit Assistance Request' %>
+  </div>
+<% end %>
