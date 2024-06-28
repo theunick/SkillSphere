@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_06_28_091725) do
+ActiveRecord::Schema.define(version: 2024_06_28_100339) do
 
   create_table "accounts", force: :cascade do |t|
     t.string "email"
@@ -21,6 +21,9 @@ ActiveRecord::Schema.define(version: 2024_06_28_091725) do
     t.datetime "updated_at", precision: 6, null: false
     t.string "uid"
     t.string "provider"
+    t.string "image"
+    t.string "oauth_token"
+    t.datetime "oauth_expires_at"
   end
 
   create_table "assistances", force: :cascade do |t|
