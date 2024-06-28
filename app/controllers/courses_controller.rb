@@ -25,13 +25,11 @@ class CoursesController < ApplicationController
 
   # POST /courses or /courses.json
   def create
-    @course = Course.new(course_params)
-    @course.seller = current_seller
-
+    @course = current_seller.courses.build(course_params)
     if @course.save
       redirect_to @course, notice: 'Course was successfully created.'
     else
-      render :new, status: :unprocessable_entity
+      render :new
     end
   end
 
