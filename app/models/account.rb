@@ -15,9 +15,6 @@ class Account < ApplicationRecord
         account.name = auth.info.name
         account.surname = auth.info.last_name # Assuming you have surname from auth.info
         account.email = auth.info.email
-        account.image = auth.info.image
-        account.oauth_token = auth.credentials.token
-        account.oauth_expires_at = Time.at(auth.credentials.expires_at)
         account.role ||= 'customer' # or any default role you want to set
       end
     end
