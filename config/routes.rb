@@ -10,14 +10,21 @@ Rails.application.routes.draw do
   root 'home#index'
   resources :courses
   resources :accounts
-  resources :reports # Aggiungi questa linea per includere le rotte per reports
+  resources :reports
 
   get 'bought_courses', to: 'courses#bought', as: 'bought_courses'
   get 'uploaded_courses', to: 'courses#uploaded', as: 'uploaded_courses'
 
-  get '/auth/:provider/callback' => 'session#create'
-  get '/auth/failure' => 'session#fail'
+  # Rotte per l'autenticazione con Google
+  get 'auth/:provider/callback', to: 'session#google_auth'
+  get 'auth/failure', to: redirect('/')
+  post 'auth/google_oauth2', to: redirect('/auth/google_oauth2')
   get '/session/destroy' => 'session#destroy'
-  
+
+  # Rotte per l'autenticazione dei venditori
+  get 'seller_login', to: 'session#new', as: 'new_session'
+  post 'seller_login', to: 'session#create', as: 'session'
+  delete 'seller_logout', to: 'session#destroy', as: 'destroy_session'
+
   get "up" => "rails/health#show", as: :rails_health_check
 end
