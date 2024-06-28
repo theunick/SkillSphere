@@ -3,6 +3,14 @@ class ApplicationController < ActionController::Base
     helper_method :current_seller
   
     private
+
+    def set_current_user
+      Rails.logger.debug "Session User ID set to: #{session[:user_id]}"
+          @current_user = Moviegoer.find_by(uid: session[:user_id])
+          path = Rails.application.routes.recognize_path(request.url)
+      Rails.logger.debug "User UID: #{@current_user}"
+
+      end
   
     def current_seller
       # Implementazione basilare che puoi sostituire in seguito
