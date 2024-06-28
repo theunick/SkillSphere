@@ -13,8 +13,11 @@
     <nav>
       <%= link_to 'Home', root_path, class: 'navbar-home-button' %>
       <%= link_to 'Report', new_report_path %>
-      <%= link_to 'New Course', new_course_path %>
-      <%= button_to "Sign in with Google", '/auth/google_oauth2', method: :post %>
+      <% if current_seller %>
+        <%= link_to 'New Course', new_course_path %>
+      <% else %>
+        <%= button_to "Sign in with Google", '/auth/google_oauth2', method: :post %>
+      <% end %>
 
     </nav>
     <%= yield %>

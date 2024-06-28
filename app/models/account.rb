@@ -15,7 +15,7 @@ class Account < ApplicationRecord
         account.name = auth.info.name
         account.surname = auth.info.last_name # Assuming you have surname from auth.info
         account.email = auth.info.email
-        account.role ||= 'customer' # or any default role you want to set
+        account.role ||= 'seller' # or any default role you want to set
       end
     end
   end
