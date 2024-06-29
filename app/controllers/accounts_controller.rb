@@ -76,20 +76,18 @@ class AccountsController < ApplicationController
       redirect_to accounts_path, alert: 'Failed to update account.'
     end
   end
-    
-  def become_seller
-    if @account.update(role: 1)
-      redirect_to accounts_path, notice: 'Account has been updated to seller.'
-    else
-      redirect_to accounts_path, alert: 'Failed to update account.'
-    end
-  end
 
-  def become_admin
-    if @account.update(role: 2)
-      redirect_to accounts_path, notice: 'Account has been updated to admin.'
-    else
-      redirect_to accounts_path, alert: 'Failed to update account.'
-    end
+  def become_seller
+    @account = Account.find(params[:id])
+    @account.update(role: 'seller')
+    redirect_to accounts_path(@account), notice: 'Role updated to seller.'
   end
+  
+    
+  def become_customer
+    @account = Account.find(params[:id])
+    @account.update(role: 'customer')
+    redirect_to accounts_path(@account), notice: 'Role updated to customer.'
+  end
+  
 end  
