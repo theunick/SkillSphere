@@ -12,16 +12,13 @@
   <body>
     <nav>
       <%= link_to 'Home', root_path, class: 'navbar-home-button' %>
+      <% if session[:user_id] %>
+        <%= link_to 'Account', accounts_path %>
+      <% end %>
       <%= link_to 'Report', new_report_path %>
       <% if current_user&.seller? %>
         <%= link_to 'New Course', new_course_path %>
       <% end %>
-      <% if !session[:user_id] %>
-        <%= button_to "Sign in with Google", '/auth/google_oauth2', method: :post %>
-      <% else %>
-        <%= button_to "Log out", '/session/destroy', method: :get %>
-      <% end %>
-
     </nav>
     <%= yield %>
   </body>

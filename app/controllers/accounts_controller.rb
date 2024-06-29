@@ -2,13 +2,13 @@ class AccountsController < ApplicationController
   before_action :set_account, only: %i[show edit update destroy]
   
   def index
-    @accounts = Account.all
+    @account = current_user
     @assistance = Assistance.new
   end
   
   def show
     @account = Account.find(params[:id])
-  end
+  end  
   
   def new
     @account = Account.new

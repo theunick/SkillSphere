@@ -12,6 +12,10 @@ Rails.application.routes.draw do
   resources :accounts
   resources :reports
 
+  resources :accounts do
+    post 'create_assistance', on: :collection
+  end
+
   get 'bought_courses', to: 'courses#bought', as: 'bought_courses'
   get 'uploaded_courses', to: 'courses#uploaded', as: 'uploaded_courses'
 
