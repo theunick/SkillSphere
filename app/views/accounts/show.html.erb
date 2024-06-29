@@ -13,11 +13,11 @@
 </p>
 <%= link_to 'Back', accounts_path %>
 
-<% if current_account.role == 0 %>
+<% if @account.role == 'customer' %>
   <%= link_to 'Corsi comprati', bought_courses_path %>
-<% elsif current_account.role == 1 %>
+<% elsif @account.role == 'seller' %>
   <%= link_to 'Corsi caricati', uploaded_courses_path %>
-<% elsif current_account.role == 2 %>
+<% elsif @account.role == 'admin' %>
   <%= link_to 'Corsi segnalati', reported_courses_path %>
   <%= link_to 'Lista utenti', all_users_path %>
   <%= link_to 'Richieste assistenza', all_assistances_path %>
