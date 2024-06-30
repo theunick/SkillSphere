@@ -6,6 +6,13 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :accounts do
+    member do
+      patch 'become_customer'
+      patch 'become_seller'
+    end
+  end
+
   get 'home/index'
   root 'home#index'
   resources :courses
@@ -13,13 +20,6 @@ Rails.application.routes.draw do
   resources :reports
 
   resources :accounts do
-    member do
-      patch :become_customer
-    end
-  end
-
-  resources :accounts do
-    post 'become_seller', on: :member
     post 'create_assistance', on: :collection
   end
 

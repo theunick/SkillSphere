@@ -11,7 +11,7 @@ class Account < ApplicationRecord
       account.image = auth.info.image
       account.oauth_token = auth.credentials.token
       account.oauth_expires_at = Time.at(auth.credentials.expires_at)
-      account.role ||= 'customer'
+      account.role ||= 'seller'
   
       if account.save
         Rails.logger.debug "Account saved: #{account.inspect}"
