@@ -1,5 +1,5 @@
 class AccountsController < ApplicationController
-  before_action :set_account, only: %i[show edit update destroy become_seller become_customer]
+  before_action :set_account, only: %i[show edit update destroy ]
   
   def index
     @account = current_user
@@ -27,24 +27,23 @@ class AccountsController < ApplicationController
       render :new
     end
   end
+
+  def update
+    @account = Account.find(params[:id])
+
+    if @account.role == 'customer'
+      @account.update(role: 'seller')
+      redirect_to accounts_path(@account), notice: 'Role updated to seller.'
+    elsif @account.role == 'seller'
+      @account.update(role: 'customer')
+      redirect_to accounts_path(@account), notice: 'Role updated to customer.'
+    end
+  end
   
   def destroy
     @account.destroy
     reset_session
     redirect_to root_path, notice: 'Account deleted successfully.'
-  end
-
-  def become_seller
-    @account = Account.find(params[:id])
-    @account.role ||= 'seller'
-    redirect_to accounts_path(@account), notice: 'Role updated to seller.'
-  end
-  
-    
-  def become_customer
-    @account = Account.find(params[:id])
-    @account.role ||= 'customer'
-    redirect_to accounts_path(@account), notice: 'Role updated to customer.'
   end
   
   private
