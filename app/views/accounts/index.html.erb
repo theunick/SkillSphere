@@ -5,16 +5,16 @@
 <p>Ruolo: <%= @account.role %></p>
 
 <% if @account.role == 'customer' %>
-  <%= button_to 'Diventa un Seller', become_seller_account_path(@account), method: :post, class: 'btn btn-primary' %>
+  <%= button_to 'Diventa un Seller', become_seller_account_path(@account), method: :patch, class: 'btn btn-primary' %>
   <%= link_to 'Corsi comprati', bought_courses_path %>
 <% elsif @account.role == 'seller' %>
-  <%= button_to 'Torna Customer', become_customer_account_path(@account), method: :post, class: 'btn btn-primary' %>
+  <%= button_to 'Torna Customer', become_customer_account_path(@account), method: :patch, class: 'btn btn-primary' %>
   <%= link_to 'Corsi comprati', bought_courses_path %>
   <%= link_to 'Corsi caricati', uploaded_courses_path %>
 <% elsif @account.role == 'admin' %>
-  <%= link_to 'Corsi segnalati', reported_courses_path %>
-  <%= link_to 'Richieste assistenza', all_assistances_path %>
-  <%= link_to 'Lista utenti', all_users_path %>
+  <%= link_to 'Corsi segnalati' %>
+  <%= link_to 'Richieste assistenza' %>
+  <%= link_to 'Lista utenti' %>
 <% end %>
 
 <h2>Request Assistance</h2>

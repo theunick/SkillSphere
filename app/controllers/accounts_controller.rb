@@ -1,9 +1,10 @@
 class AccountsController < ApplicationController
-  before_action :set_account, only: %i[show edit update destroy]
+  before_action :set_account, only: %i[show edit update destroy become_seller become_customer]
   
   def index
     @account = current_user
     @assistance = Assistance.new
+    @accounts = Account.all
   end
   
   def show
@@ -27,17 +28,22 @@ class AccountsController < ApplicationController
     end
   end
   
-  def become_seller
-    if @account.update(role: 1)
-      redirect_to accounts_path, notice: 'Account has been updated to seller.'
-    else
-      redirect_to accounts_path, alert: 'Failed to update account.'
-    end
-  end
-  
   def destroy
     @account.destroy
     redirect_to accounts_url, notice: 'Account was successfully destroyed.'
+  end
+
+  def become_seller
+    @account = Account.find(params[:id])
+    @account.role ||= 'seller'
+    redirect_to accounts_path(@account), notice: 'Role updated to seller.'
+  end
+  
+    
+  def become_customer
+    @account = Account.find(params[:id])
+    @account.role ||= 'customer'
+    redirect_to accounts_path(@account), notice: 'Role updated to customer.'
   end
   
   private
@@ -67,27 +73,5 @@ class AccountsController < ApplicationController
   
   def assistance_params
     params.require(:assistance).permit(:message)
-  end
-
-  def become_customer
-    if @account.update(role: 0)
-      redirect_to accounts_path, notice: 'Account has been updated to customer.'
-    else
-      redirect_to accounts_path, alert: 'Failed to update account.'
-    end
-  end
-
-  def become_seller
-    @account = Account.find(params[:id])
-    @account.update(role: 'seller')
-    redirect_to accounts_path(@account), notice: 'Role updated to seller.'
-  end
-  
-    
-  def become_customer
-    @account = Account.find(params[:id])
-    @account.update(role: 'customer')
-    redirect_to accounts_path(@account), notice: 'Role updated to customer.'
-  end
-  
+  end  
 end  
