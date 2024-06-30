@@ -5,10 +5,12 @@
 <p>Ruolo: <%= @account.role %></p>
 
 <% if @account.role == 'customer' %>
-  <%= button_to 'Diventa un Seller', become_seller_account_path(@account), method: :patch, class: 'btn btn-primary' %>
+  <%= button_to 'Diventa un Seller', become_seller_account_path(@account) %>
+  <%= button_to 'Delete Account', account_path(@account), method: :delete, data: { confirm: 'Are you sure?' } %>
   <%= link_to 'Corsi comprati', bought_courses_path %>
 <% elsif @account.role == 'seller' %>
   <%= button_to 'Torna Customer', become_customer_account_path(@account), method: :patch, class: 'btn btn-primary' %>
+  <%= button_to 'Delete Account', account_path(@account), method: :delete, data: { confirm: 'Are you sure?' } %>
   <%= link_to 'Corsi comprati', bought_courses_path %>
   <%= link_to 'Corsi caricati', uploaded_courses_path %>
 <% elsif @account.role == 'admin' %>

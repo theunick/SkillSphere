@@ -30,7 +30,8 @@ class AccountsController < ApplicationController
   
   def destroy
     @account.destroy
-    redirect_to accounts_url, notice: 'Account was successfully destroyed.'
+    reset_session
+    redirect_to root_path, notice: 'Account deleted successfully.'
   end
 
   def become_seller
