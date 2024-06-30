@@ -5,26 +5,30 @@
 <p>Ruolo: <%= @account.role %></p>
 
 <% if @account.role == 'customer' %>
-  <%= button_to 'Diventa un Seller', become_seller_account_path(@account), method: :patch, class: 'btn btn-primary' %>
+  <%= button_to 'Diventa un Seller', account_path(@account), method: :patch %>
+  <%= button_to 'Delete Account', account_path(@account), method: :delete, data: { confirm: 'Are you sure?' } %>
   <%= link_to 'Corsi comprati', bought_courses_path %>
 <% elsif @account.role == 'seller' %>
-  <%= button_to 'Torna Customer', become_customer_account_path(@account), method: :patch, class: 'btn btn-primary' %>
+  <%= button_to 'Torna Customer', account_path(@account), method: :patch %>
+  <%= button_to 'Delete Account', account_path(@account), method: :delete, data: { confirm: 'Are you sure?' } %>
   <%= link_to 'Corsi comprati', bought_courses_path %>
   <%= link_to 'Corsi caricati', uploaded_courses_path %>
 <% elsif @account.role == 'admin' %>
   <%= link_to 'Corsi segnalati' %>
   <%= link_to 'Richieste assistenza' %>
-  <%= link_to 'Lista utenti' %>
+  <%= link_to 'Lista utenti', admins_path %>
 <% end %>
 
-<h2>Request Assistance</h2>
-<%= form_with model: @assistance, url: create_assistance_accounts_path do |form| %>
-  <div class="field">
-    <%= form.label :message %>
-    <%= form.text_area :message %>
-  </div>
+<% if @account.role != 'admin' %>
+  <h2>Request Assistance</h2>
+  <%= form_with model: @assistance, url: create_assistance_accounts_path do |form| %>
+    <div class="field">
+      <%= form.label :message %>
+      <%= form.text_area :message %>
+    </div>
 
-  <div class="actions">
-    <%= form.submit 'Submit Assistance Request' %>
-  </div>
+    <div class="actions">
+      <%= form.submit 'Submit Assistance Request' %>
+    </div>
+  <% end %>
 <% end %>
