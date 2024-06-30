@@ -8,7 +8,7 @@
   <%= button_to 'Diventa un Seller', become_seller_account_path(@account), method: :post, class: 'btn btn-primary' %>
   <%= link_to 'Corsi comprati', bought_courses_path %>
 <% elsif @account.role == 'seller' %>
-  <%= button_to 'Torna Customer', become_customer_account_path(@account), method: :post, class: 'btn btn-primary' %>
+  <%= button_to 'Torna Customer', become_customer_account_path(@account), method: :patch, class: 'btn btn-primary' %>
   <%= link_to 'Corsi comprati', bought_courses_path %>
   <%= link_to 'Corsi caricati', uploaded_courses_path %>
 <% elsif @account.role == 'admin' %>

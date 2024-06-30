@@ -27,14 +27,6 @@ class AccountsController < ApplicationController
     end
   end
   
-  def become_seller
-    if @account.update(role: 1)
-      redirect_to accounts_path, notice: 'Account has been updated to seller.'
-    else
-      redirect_to accounts_path, alert: 'Failed to update account.'
-    end
-  end
-  
   def destroy
     @account.destroy
     redirect_to accounts_url, notice: 'Account was successfully destroyed.'
@@ -69,24 +61,16 @@ class AccountsController < ApplicationController
     params.require(:assistance).permit(:message)
   end
 
-  def become_customer
-    if @account.update(role: 0)
-      redirect_to accounts_path, notice: 'Account has been updated to customer.'
-    else
-      redirect_to accounts_path, alert: 'Failed to update account.'
-    end
-  end
-
   def become_seller
     @account = Account.find(params[:id])
-    @account.update(role: 'seller')
+    @account.role ||= 'seller'
     redirect_to accounts_path(@account), notice: 'Role updated to seller.'
   end
   
     
   def become_customer
     @account = Account.find(params[:id])
-    @account.update(role: 'customer')
+    @account.role ||= 'customer'
     redirect_to accounts_path(@account), notice: 'Role updated to customer.'
   end
   
