@@ -16,7 +16,7 @@
 <% elsif @account.role == 'admin' %>
   <%= link_to 'Corsi segnalati' %>
   <%= link_to 'Richieste assistenza' %>
-  <%= link_to 'Lista utenti' %>
+  <%= link_to 'Lista utenti', admins_path %>
 <% end %>
 
 <% if @account.role != 'admin' %>

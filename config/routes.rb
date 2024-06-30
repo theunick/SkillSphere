@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   resources :courses
   resources :accounts
   resources :reports
+  resources :admins
 
   resources :accounts do
     post 'create_assistance', on: :collection
