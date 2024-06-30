@@ -121,6 +121,8 @@ GEM
       rexml
     google-apis-discovery_v1 (0.17.0)
       google-apis-core (>= 0.15.0, < 2.a)
+    google-apis-drive_v2 (0.46.0)
+      google-apis-core (>= 0.15.0, < 2.a)
     google-apis-generator (0.15.0)
       activesupport (>= 5.0)
       gems (~> 1.2)
@@ -328,6 +330,7 @@ DEPENDENCIES
   dotenv-rails
   figaro
   google-api-client (~> 0.53.0)
+  google-apis-drive_v2 (~> 0.1)
   jbuilder (~> 2.7)
   listen (~> 3.3)
   omniauth (~> 2.0)

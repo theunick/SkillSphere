@@ -10,15 +10,28 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_06_25_180734) do
+ActiveRecord::Schema.define(version: 2024_06_27_201530) do
 
   create_table "accounts", force: :cascade do |t|
+    t.string "uid"
+    t.string "provider"
     t.string "email"
     t.string "name"
     t.string "surname"
+    t.string "image"
+    t.string "oauth_token"
+    t.datetime "oauth_expires_at"
     t.integer "role"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "assistances", force: :cascade do |t|
+    t.text "message"
+    t.integer "user_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id"], name: "index_assistances_on_user_id"
   end
 
   create_table "courses", force: :cascade do |t|
@@ -28,7 +41,18 @@ ActiveRecord::Schema.define(version: 2024_06_25_180734) do
     t.integer "seller_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "description"
     t.index ["seller_id"], name: "index_courses_on_seller_id"
+  end
+
+  create_table "reports", force: :cascade do |t|
+    t.integer "account_id", null: false
+    t.integer "course_id", null: false
+    t.string "message"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["account_id"], name: "index_reports_on_account_id"
+    t.index ["course_id"], name: "index_reports_on_course_id"
   end
 
   create_table "reviews", force: :cascade do |t|
@@ -42,7 +66,22 @@ ActiveRecord::Schema.define(version: 2024_06_25_180734) do
     t.index ["user_id"], name: "index_reviews_on_user_id"
   end
 
+  create_table "users", force: :cascade do |t|
+    t.string "email", default: "", null: false
+    t.string "encrypted_password", default: "", null: false
+    t.string "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+  end
+
+  add_foreign_key "assistances", "users"
   add_foreign_key "courses", "sellers"
+  add_foreign_key "reports", "accounts"
+  add_foreign_key "reports", "courses"
   add_foreign_key "reviews", "courses"
   add_foreign_key "reviews", "users"
 end

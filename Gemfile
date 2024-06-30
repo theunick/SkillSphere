@@ -60,6 +60,8 @@ gem 'google-api-client', '~> 0.53.0'
 
 gem 'omniauth-google-oauth2', '~> 1.0'
 
+gem 'google-apis-drive_v2', '~> 0.1'
+
 gem 'dotenv-rails', groups: [:development, :test]
 
 

@@ -1,6 +1,4 @@
-# config/routes.rb
 Rails.application.routes.draw do
-
   resources :courses do
     member do
       post 'upload_file'
@@ -8,23 +6,36 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :accounts do
+    member do
+      patch 'become_customer'
+      patch 'become_seller'
+    end
+  end
+
   get 'home/index'
   root 'home#index'
   resources :courses
   resources :accounts
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  resources :reports
 
-  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
-  get "up" => "rails/health#show", as: :rails_health_check
+  resources :accounts do
+    post 'create_assistance', on: :collection
+  end
 
   get 'bought_courses', to: 'courses#bought', as: 'bought_courses'
   get 'uploaded_courses', to: 'courses#uploaded', as: 'uploaded_courses'
-  
-  get '/auth/:provider/callback' => 'session#create'
-  get '/auth/failure' => 'session#fail'
+
+  # Rotte per l'autenticazione con Google
+  get 'auth/:provider/callback', to: 'session#google_auth'
+  get 'auth/failure', to: redirect('/')
+  post 'auth/google_oauth2', to: redirect('/auth/google_oauth2')
   get '/session/destroy' => 'session#destroy'
 
-  # Defines the root path route ("/")
-  # root "posts#index"
+  # Rotte per l'autenticazione dei venditori
+  get 'seller_login', to: 'session#new', as: 'new_session'
+  post 'seller_login', to: 'session#create', as: 'session'
+  delete 'seller_logout', to: 'session#destroy', as: 'destroy_session'
+
+  get "up" => "rails/health#show", as: :rails_health_check
 end

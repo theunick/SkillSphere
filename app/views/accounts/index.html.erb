@@ -1,25 +1,30 @@
-<h1>Accounts</h1>
-<table>
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Name</th>
-      <th>Surname</th>
-      <th>Email</th>
-      <th>Role</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @accounts.each do |account| %>
-      <tr>
-        <td><%= account.id %></td>
-        <td><%= account.name %></td>
-        <td><%= account.surname %></td>
-        <td><%= account.email %></td>
-        <td><%= account.role %></td>
-        <td><%= link_to 'Show', account_path(account) %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+<h1>Personal Account</h1>
+
+<p>Nome: <%= @account.name %></p>
+<p>Email: <%= @account.email %></p>
+<p>Ruolo: <%= @account.role %></p>
+
+<% if @account.role == 'customer' %>
+  <%= button_to 'Diventa un Seller', become_seller_account_path(@account), method: :patch, class: 'btn btn-primary' %>
+  <%= link_to 'Corsi comprati', bought_courses_path %>
+<% elsif @account.role == 'seller' %>
+  <%= button_to 'Torna Customer', become_customer_account_path(@account), method: :patch, class: 'btn btn-primary' %>
+  <%= link_to 'Corsi comprati', bought_courses_path %>
+  <%= link_to 'Corsi caricati', uploaded_courses_path %>
+<% elsif @account.role == 'admin' %>
+  <%= link_to 'Corsi segnalati' %>
+  <%= link_to 'Richieste assistenza' %>
+  <%= link_to 'Lista utenti' %>
+<% end %>
+
+<h2>Request Assistance</h2>
+<%= form_with model: @assistance, url: create_assistance_accounts_path do |form| %>
+  <div class="field">
+    <%= form.label :message %>
+    <%= form.text_area :message %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit 'Submit Assistance Request' %>
+  </div>
+<% end %>
