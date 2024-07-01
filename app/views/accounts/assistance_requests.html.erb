@@ -1,0 +1,28 @@
+<h1>All Assistance Requests</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>User</th>
+      <th>Description</th>
+      <th>Status</th>
+      <th>Created At</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% if @assistance_requests.present? %>
+      <% @assistance_requests.each do |request| %>
+        <tr>
+          <td><%= request.user.email %></td>
+          <td><%= request.description %></td>
+          <td><%= request.status %></td>
+          <td><%= request.created_at.strftime("%Y-%m-%d %H:%M") %></td>
+        </tr>
+      <% end %>
+    <% else %>
+      <tr>
+        <td colspan="2">No assistance requests found.</td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
