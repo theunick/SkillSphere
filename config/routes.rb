@@ -14,8 +14,22 @@ Rails.application.routes.draw do
   resources :admins
 
   resources :accounts do
-    post 'create_assistance', on: :collection
+    resources :assistance_requests
   end
+  
+  post 'accounts/:id/create_assistance_request', to: 'accounts#create_assistance_request'
+  
+  resources :accounts do
+    member do
+      post 'create_assistance_request'
+    end
+  
+    collection do
+      get 'assistance_requests'
+    end
+  end   
+
+  get 'assistance_requests', to: 'accounts#assistance_requests'
 
   get 'bought_courses', to: 'courses#bought', as: 'bought_courses'
   get 'uploaded_courses', to: 'courses#uploaded', as: 'uploaded_courses'
