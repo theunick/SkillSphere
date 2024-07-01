@@ -20,7 +20,7 @@
         <td><%= user.role %></td>
         <td><%= user.created_at.strftime('%d/%m/%Y') %></td>
         <td>
-          <%= button_to 'Delete Account', account_path(user), method: :delete, data: { confirm: 'Are you sure?' } %>
+          <%= button_to 'Elimina Account', account_path(user), method: :delete, data: { confirm: 'Are you sure?' } %>
         </td> 
       </tr>
     <% end %>
