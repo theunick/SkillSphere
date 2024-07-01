@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_06_30_215309) do
+ActiveRecord::Schema.define(version: 2024_07_01_204412) do
 
   create_table "accounts", force: :cascade do |t|
     t.string "uid"
@@ -51,6 +51,7 @@ ActiveRecord::Schema.define(version: 2024_06_30_215309) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "description"
+    t.json "google_drive_file_ids"
     t.index ["seller_id"], name: "index_courses_on_seller_id"
   end
 
@@ -89,7 +90,7 @@ ActiveRecord::Schema.define(version: 2024_06_30_215309) do
 
   add_foreign_key "assistance_requests", "users"
   add_foreign_key "assistances", "users"
-  add_foreign_key "courses", "sellers"
+  add_foreign_key "courses", "accounts", column: "seller_id"
   add_foreign_key "reports", "accounts"
   add_foreign_key "reports", "courses"
   add_foreign_key "reviews", "courses"

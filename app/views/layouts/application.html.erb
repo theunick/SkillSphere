@@ -1,25 +1,35 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>SkillSphere</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <%= csrf_meta_tags %>
-    <%= csp_meta_tag %>
+<head>
+  <title>SkillSphere</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
 
-    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
-  </head>
+  <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+  <%= javascript_include_tag 'application' %>
+  <%= javascript_include_tag 'https://apis.google.com/js/api.js' %>
+  <%= javascript_include_tag 'https://accounts.google.com/gsi/client' %>
+</head>
 
-  <body>
-    <nav>
-      <%= link_to 'Home', root_path, class: 'navbar-home-button' %>
-      <% if session[:user_id] %>
-        <%= link_to 'Account', accounts_path %>
-        <%= link_to 'Report', new_report_path %>
-      <% end %>
-      <% if current_user&.seller? %>
-        <%= link_to 'New Course', new_course_path %>
-      <% end %>
-    </nav>
-    <%= yield %>
-  </body>
+<body>
+  <nav>
+    <%= link_to 'Home', root_path, class: 'navbar-home-button' %>
+    <% if session[:user_id] %>
+      <%= link_to 'Account', accounts_path %>
+      <%= link_to 'Report', new_report_path %>
+    <% end %>
+    <% if current_user&.seller? %>
+      <%= link_to 'New Course', new_course_path %>
+    <% end %>
+  </nav>
+  <%= yield %>
+  <div id="result"></div>
+  <script>
+    var googleClientId = '<%= ENV['GOOGLE_CLIENT_ID'] %>';
+    var googleApiKey = '<%= ENV['GOOGLE_API_KEY'] %>';
+  </script>
+  <script async defer src="https://apis.google.com/js/api.js" onload="onApiLoad()"></script>
+  <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
+</body>
 </html>

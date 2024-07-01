@@ -1,6 +1,8 @@
 # app/models/user.rb
 class User < ApplicationRecord
 
+  has_many :courses, foreign_key: :seller_id
+
   devise :database_authenticatable, :registerable,
   :recoverable, :rememberable, :validatable
   
@@ -13,4 +15,10 @@ class User < ApplicationRecord
       user.oauth_expires_at = Time.at(auth.credentials.expires_at)
     end
   end
+
+  def seller?
+    # Definisci la logica per determinare se l'utente è un venditore
+    self.role == 'seller'
+  end
+
 end
