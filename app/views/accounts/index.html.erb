@@ -1,34 +1,39 @@
 <h1>Personal Account</h1>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Surname</th>
-      <th>Email</th>
-      <th>Role</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @accounts.each do |account| %>
-      <tr>
-        <td><%= account.name %></td>
-        <td><%= account.surname %></td>
-        <td><%= account.email %></td>
-        <td><%= account.role %></td>
-        <td><%= link_to 'Show', account_path(account) %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
 
-<h2>Request Assistance</h2>
-<%= form_with model: @assistance, url: create_assistance_account_path do |form| %>
-  <div class="field">
-    <%= form.label :message %>
-    <%= form.text_area :message %>
-  </div>
+<p>Nome: <%= @account.name %></p>
+<p>Email: <%= @account.email %></p>
+<p>Ruolo: <%= @account.role %></p>
 
-  <div class="actions">
-    <%= form.submit 'Submit Assistance Request' %>
-  </div>
+<% if @account.role == 'customer' %>
+  <%= button_to 'Diventa un Seller', account_path(@account), method: :patch %>
+  <%= button_to 'Delete Account', account_path(@account), method: :delete, data: { confirm: 'Are you sure?' } %>
+  <%= link_to 'Corsi comprati', bought_courses_path %>
+<% elsif @account.role == 'seller' %>
+  <%= button_to 'Torna Customer', account_path(@account), method: :patch %>
+  <%= button_to 'Delete Account', account_path(@account), method: :delete, data: { confirm: 'Are you sure?' } %>
+  <%= link_to 'Corsi comprati', bought_courses_path %>
+  <%= link_to 'Corsi caricati', uploaded_courses_path %>
+<% elsif @account.role == 'admin' %>
+  <%= link_to 'Corsi segnalati' %>
+  <%= link_to 'Richieste assistenza', assistance_requests_path %>
+  <%= link_to 'Lista utenti', admins_path %>
+<% end %>
+
+<% if @account.role != 'admin' %>
+  <h2>New Assistance Request</h2>
+  <%= form_with model: @assistance_request, url: create_assistance_request_account_path(@account), local: true do |form| %>
+    <div>
+      <%= form.label :description %>
+      <%= form.text_area :description %>
+    </div>
+    
+    <div>
+      <%= form.label :status %>
+      <%= form.select :status, options_for_select(['Pending', 'In Progress', 'Resolved']) %>
+    </div>
+    
+    <div>
+      <%= form.submit 'Create Assistance Request' %>
+    </div>
+  <% end %>  
 <% end %>

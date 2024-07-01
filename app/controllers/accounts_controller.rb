@@ -1,95 +1,88 @@
 class AccountsController < ApplicationController
-  before_action :set_account, only: %i[show edit update destroy]
-  
+  before_action :set_account, only: %i[show edit update destroy new_assistance_request create_assistance_request]
+
   def index
+    @account = current_user
     @accounts = Account.all
-    @assistance = Assistance.new
+    @assistance_request = AssistanceRequest.new
   end
-  
+
   def show
     @account = Account.find(params[:id])
-  end
-  
+  end  
+
   def new
     @account = Account.new
   end
-  
+
   def edit
   end
-  
+
   def create
     @account = Account.new(account_params)
-  
     if @account.save
       redirect_to @account, notice: 'Account was successfully created.'
     else
       render :new
     end
   end
-  
-  def become_seller
-    if @account.update(role: 1)
-      redirect_to accounts_path, notice: 'Account has been updated to seller.'
-    else
-      redirect_to accounts_path, alert: 'Failed to update account.'
+
+  def update
+    @account = Account.find(params[:id])
+    if @account.role == 'customer'
+      @account.update(role: 'seller')
+      redirect_to accounts_path(@account), notice: 'Role updated to seller.'
+    elsif @account.role == 'seller'
+      @account.update(role: 'customer')
+      redirect_to accounts_path(@account), notice: 'Role updated to customer.'
     end
   end
-  
+
   def destroy
+    @current = Account.find(params[:id])
+    if @current.id == @account.id
+      reset_session
+    end
     @account.destroy
-    redirect_to accounts_url, notice: 'Account was successfully destroyed.'
+    reset_session
+    redirect_to root_path, notice: 'Account deleted successfully.'
   end
-  
-  private
-  
-  def set_account
+
+  def new_assistance_request
+    @assistance_request = AssistanceRequest.new
+  end
+
+  def create_assistance_request
     @account = Account.find(params[:id])
+    @assistance_request = @account.assistance_requests.build(assistance_request_params)
+    if @assistance_request.save
+      redirect_to account_path(@account), notice: 'Assistance request created successfully.'
+    else
+      render :new_assistance_request
+    end
+  end  
+
+  def assistance_requests
+    @assistance_requests = AssistanceRequest.all
   end
-  
+
+  private
+
+  def assistance_request_params
+    params.require(:assistance_request).permit(:description, :status)
+  end
+
+  private 
+
+  def set_account
+    if params[:id] =~ /\A\d+\z/
+      @account = Account.find(params[:id])
+    else
+      redirect_to root_path, alert: "Account non valido."
+    end
+  end  
+
   def account_params
     params.require(:account).permit(:email, :name, :surname, :role)
   end
-
-  def assistance
-    @assistance = Assistance.new
-  end
-  
-  def create_assistance
-    @assistance = current_user.assistances.build(assistance_params)
-    if @assistance.save
-      redirect_to account_path, notice: 'Assistance request submitted successfully.'
-    else
-      render :index
-    end
-  end
-  
-  private
-  
-  def assistance_params
-    params.require(:assistance).permit(:message)
-  end
-
-  def become_customer
-    if @account.update(role: 0)
-      redirect_to accounts_path, notice: 'Account has been updated to customer.'
-    else
-      redirect_to accounts_path, alert: 'Failed to update account.'
-    end
-  end
-    
-  def become_seller
-    if @account.update(role: 1)
-      redirect_to accounts_path, notice: 'Account has been updated to seller.'
-    else
-      redirect_to accounts_path, alert: 'Failed to update account.'
-    end
-  end
-
-  def become_admin
-    if @account.update(role: 2)
-      redirect_to accounts_path, notice: 'Account has been updated to admin.'
-    else
-      redirect_to accounts_path, alert: 'Failed to update account.'
-    end
-  end
-end  
+end

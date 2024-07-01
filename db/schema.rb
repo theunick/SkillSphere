@@ -10,20 +10,29 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_06_28_100339) do
+ActiveRecord::Schema.define(version: 2024_06_30_215309) do
 
   create_table "accounts", force: :cascade do |t|
+    t.string "uid"
+    t.string "provider"
     t.string "email"
     t.string "name"
     t.string "surname"
-    t.integer "role"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.string "uid"
-    t.string "provider"
     t.string "image"
     t.string "oauth_token"
     t.datetime "oauth_expires_at"
+    t.integer "role"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "assistance_requests", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.text "description"
+    t.string "status"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id"], name: "index_assistance_requests_on_user_id"
   end
 
   create_table "assistances", force: :cascade do |t|
@@ -78,6 +87,7 @@ ActiveRecord::Schema.define(version: 2024_06_28_100339) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "assistance_requests", "users"
   add_foreign_key "assistances", "users"
   add_foreign_key "courses", "sellers"
   add_foreign_key "reports", "accounts"

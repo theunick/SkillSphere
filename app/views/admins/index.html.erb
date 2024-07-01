@@ -1,0 +1,28 @@
+<h1>Lista Utenti</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Nome</th>
+      <th>Email</th>
+      <th>Role</th>
+      <th>Data di Registrazione</th>
+      <th>Actions</th> 
+    </tr>
+  </thead>
+  <tbody>
+    <% @users.each do |user| %>
+      <tr>
+        <td><%= user.id %></td>
+        <td><%= user.name %></td>
+        <td><%= user.email %></td>
+        <td><%= user.role %></td>
+        <td><%= user.created_at.strftime('%d/%m/%Y') %></td>
+        <td>
+          <%= button_to 'Delete Account', account_path(user), method: :delete, data: { confirm: 'Are you sure?' } %>
+        </td> 
+      </tr>
+    <% end %>
+  </tbody>
+</table>
