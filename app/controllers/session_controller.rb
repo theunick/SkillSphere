@@ -1,4 +1,4 @@
-class SessionController < ApplicationController
+class SessionsController < ApplicationController
   skip_before_action :verify_authenticity_token, only: :google_auth
 
   def google_auth
