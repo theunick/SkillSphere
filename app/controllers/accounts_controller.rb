@@ -70,7 +70,7 @@ class AccountsController < ApplicationController
   private
 
   def assistance_request_params
-    params.require(:assistance_request).permit(:description, :status)
+    params.require(:assistance_request).permit(:message, :status)
   end
 
   private 

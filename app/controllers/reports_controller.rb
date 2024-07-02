@@ -1,50 +1,36 @@
 class ReportsController < ApplicationController
-  before_action :set_report, only: [:show, :edit, :update, :destroy]
-  
+  before_action :authenticate_admin!, only: [:index]
+
   def index
-    @account = current_user
+    Rails.logger.debug "Entering ReportsController#index"
+    @reports = Report.includes(:course).all
   end
-  
-  def show
-  end
-  
-  def new
-    @report = Report.new
-  end
-  
+
   def create
     @report = Report.new(report_params)
+    @report.account = current_user
     if @report.save
-      redirect_to @report, notice: 'Report was successfully created.'
+      redirect_to course_path(@report.course_id), notice: 'Segnalazione inviata con successo.'
     else
-      render :new
+      redirect_to course_path(@report.course_id), alert: 'Errore nell\'invio della segnalazione.'
     end
   end
-  
-  def edit
-  end
-  
-  def update
-    if @report.update(report_params)
-      redirect_to @report, notice: 'Report was successfully updated.'
-    else
-      render :edit
-    end
-  end
-  
+
   def destroy
-    @report.destroy
-    redirect_to reports_url, notice: 'Report was successfully destroyed.'
-  end
-  
-  private
-  
-  def set_report
     @report = Report.find(params[:id])
+    @report.destroy
+    redirect_to reported_courses_path, notice: 'Segnalazione eliminata con successo.'
   end
-  
+
+  private
+
   def report_params
-    params.require(:report).permit(:account_id, :course_id, :message)
+    params.require(:report).permit(:course_id, :subject, :description)
+  end
+
+  def authenticate_admin!
+    unless current_user && current_user.admin?
+      redirect_to root_path, alert: 'Accesso non autorizzato.'
+    end
   end
 end
-  

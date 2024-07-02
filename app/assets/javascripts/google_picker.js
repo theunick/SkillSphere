@@ -134,3 +134,14 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Google Picker button not found');
   }
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+  const reportedCoursesLink = document.getElementById('reported-courses-link');
+  if (reportedCoursesLink) {
+    console.log('Reported Courses Link:', reportedCoursesLink.href);
+    reportedCoursesLink.addEventListener('click', function() {
+      console.log('Reported Courses Link clicked');
+    });
+  }
+});
+

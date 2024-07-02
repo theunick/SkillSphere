@@ -3,32 +3,22 @@ Rails.application.routes.draw do
     member do
       post 'upload_file'
       get 'share_drive'
+      post 'add_to_cart'
     end
   end
 
   get 'home/index'
   root 'home#index'
   resources :courses
-  resources :accounts
-  resources :reports
-  resources :admins
-
   resources :accounts do
-    resources :assistance_requests
+    resources :assistance_requests, only: [:create, :destroy, :index]
   end
-  
-  resources :accounts do
-    member do
-      post 'create_assistance_request'
-    end
-  
-    collection do
-      get 'assistance_requests'
-    end
-  end   
 
-  post 'accounts/:id/create_assistance_request', to: 'accounts#create_assistance_request'
-  get 'assistance_requests', to: 'accounts#assistance_requests'
+  resources :reports, only: [:create, :destroy]
+  get 'reported_courses', to: 'reports#index', as: 'reported_courses'
+  get 'assistance_requests', to: 'assistance_requests#index', as: 'all_assistances'
+
+  resources :admins
 
   get 'bought_courses', to: 'courses#bought', as: 'bought_courses'
   get 'uploaded_courses', to: 'courses#uploaded', as: 'uploaded_courses'
