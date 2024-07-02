@@ -1,4 +1,4 @@
-class SessionController < ApplicationController
+class SessionsController < ApplicationController
   skip_before_action :verify_authenticity_token, only: :google_auth
 
   def google_auth
@@ -19,7 +19,7 @@ class SessionController < ApplicationController
   end
 
   def destroy
-    session.delete(:user_id) 
+    session.delete(:user_id)
     redirect_to root_path, notice: 'Signed out'
   end
 end

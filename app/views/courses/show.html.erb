@@ -1,16 +1,6 @@
-<!-- app/views/courses/show.html.erb -->
-<p id="notice"><%= notice %></p>
-
-<h1><%= @course.title %></h1>
-
 <p>
-  <strong>Code:</strong>
-  <%= @course.code %>
-</p>
-
-<p>
-  <strong>Category:</strong>
-  <%= @course.category %>
+  <strong>Title:</strong>
+  <%= @course.title %>
 </p>
 
 <p>
@@ -19,22 +9,16 @@
 </p>
 
 <p>
-  <strong>Price:</strong>
-  <%= @course.price %>
+  <strong>Google Drive Files:</strong>
+  <ul>
+    <% if @course.google_drive_file_ids.present? %>
+      <% JSON.parse(@course.google_drive_file_ids).each do |file_id| %>
+        <li>
+          <%= link_to "View File", "https://drive.google.com/open?id=#{file_id}", target: "_blank" %>
+        </li>
+      <% end %>
+    <% else %>
+      <li>No Google Drive files available.</li>
+    <% end %>
+  </ul>
 </p>
-
-<h2>Upload File</h2>
-<%= form_with url: upload_file_course_path(@course), local: true, method: :post, multipart: true do %>
-  <div class="field">
-    <%= file_field_tag :file %>
-  </div>
-  <div class="actions">
-    <%= submit_tag "Upload" %>
-  </div>
-<% end %>
-
-<h2>Google Drive Files</h2>
-<%= link_to 'Access Google Drive', share_drive_course_path(@course) %>
-
-<%= link_to 'Edit', edit_course_path(@course) %> |
-<%= link_to 'Back', courses_path %>

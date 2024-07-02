@@ -34,15 +34,15 @@ Rails.application.routes.draw do
   get 'uploaded_courses', to: 'courses#uploaded', as: 'uploaded_courses'
 
   # Rotte per l'autenticazione con Google
-  get 'auth/:provider/callback', to: 'session#google_auth'
+  get 'auth/:provider/callback', to: 'sessions#google_auth'
   get 'auth/failure', to: redirect('/')
   post 'auth/google_oauth2', to: redirect('/auth/google_oauth2')
-  get '/session/destroy' => 'session#destroy'
+  get '/session/destroy' => 'sessions#destroy'
 
   # Rotte per l'autenticazione dei venditori
-  get 'seller_login', to: 'session#new', as: 'new_session'
-  post 'seller_login', to: 'session#create', as: 'session'
-  delete 'seller_logout', to: 'session#destroy', as: 'destroy_session'
+  get 'seller_login', to: 'sessions#new', as: 'new_session'
+  post 'seller_login', to: 'sessions#create', as: 'session'
+  delete 'seller_logout', to: 'sessions#destroy', as: 'destroy_session'
 
   get "up" => "rails/health#show", as: :rails_health_check
 end
