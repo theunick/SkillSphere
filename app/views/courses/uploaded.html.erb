@@ -1,0 +1,14 @@
+<h1>I tuoi corsi caricati</h1>
+
+<% if @courses.present? && @courses.any? %>
+  <ul>
+    <% @courses.each do |course| %>
+      <li>
+        <%= link_to course.title, course_path(course) %> - <%= course.description %>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>Non hai ancora caricato alcun corso.</p>
+<% end %>
+
