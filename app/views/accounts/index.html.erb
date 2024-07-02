@@ -20,20 +20,20 @@
 <% end %>
 
 <% if @account.role != 'admin' %>
-  <h2>New Assistance Request</h2>
+  <h2>Nuova Richiesta Assistenza</h2>
   <%= form_with model: @assistance_request, url: account_path(@account), method: :post, local: true do |form| %>
     <div>
-      <%= form.label :description %>
+      <%= form.label :descrizione %>
       <%= form.text_area :description %>
     </div>
     
     <div>
-      <%= form.label :status %>
-      <%= form.select :status, options_for_select(['Pending', 'In Progress', 'Resolved']) %>
+      <%= form.label :argomento %>
+      <%= form.select :status, options_for_select(['---', 'Transazioni', 'Corsi', 'Account']) %>
     </div>
     
     <div>
-      <%= form.submit 'Create Assistance Request' %>
+      <%= form.submit 'Invia' %>
     </div>
   <% end %>  
 <% end %>
