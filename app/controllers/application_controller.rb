@@ -8,7 +8,6 @@ class ApplicationController < ActionController::Base
 
   def set_current_user
     @current_user = Account.find_by(uid: session[:user_id])
-    redirect_to root_path, alert: 'You must be logged in.' unless @current_user
   end
 
   def current_user
