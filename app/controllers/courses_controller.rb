@@ -45,6 +45,11 @@ class CoursesController < ApplicationController
     redirect_to courses_url, notice: 'Course was successfully destroyed.'
   end
 
+    # GET /courses/uploaded
+  def uploaded
+    @courses = current_seller.courses
+  end
+
   private
 
   # Use callbacks to share common setup or constraints between actions.
