@@ -4,9 +4,6 @@ class Account < ApplicationRecord
   has_many :courses, foreign_key: :seller_id
   has_many :assistance_requests
 
-  devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable
-
   def self.from_omniauth(auth)
     where(uid: auth.uid, provider: auth.provider).first_or_initialize.tap do |account|
       account.email = auth.info.email
@@ -15,7 +12,7 @@ class Account < ApplicationRecord
       account.oauth_token = auth.credentials.token
       account.oauth_expires_at = Time.at(auth.credentials.expires_at)
       account.role ||= 'seller'
-      account.save!
+      account.save!(validate: false)
     end
   end
 
