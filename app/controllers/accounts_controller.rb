@@ -49,6 +49,7 @@ class AccountsController < ApplicationController
   end
 
   def new_assistance_request
+    @account = Account.find(params[:id])
     @assistance_request = AssistanceRequest.new
   end
 

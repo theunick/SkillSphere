@@ -6,11 +6,11 @@
 
 <% if @account.role == 'customer' %>
   <%= button_to 'Diventa un Seller', account_path(@account), method: :patch %>
-  <%= button_to 'Delete Account', account_path(@account), method: :delete, data: { confirm: 'Are you sure?' } %>
+  <%= button_to 'Elimina Account', account_path(@account), method: :delete, data: { confirm: 'Are you sure?' } %>
   <%= link_to 'Corsi comprati', bought_courses_path %>
 <% elsif @account.role == 'seller' %>
   <%= button_to 'Torna Customer', account_path(@account), method: :patch %>
-  <%= button_to 'Delete Account', account_path(@account), method: :delete, data: { confirm: 'Are you sure?' } %>
+  <%= button_to 'Elimina Account', account_path(@account), method: :delete, data: { confirm: 'Are you sure?' } %>
   <%= link_to 'Corsi comprati', bought_courses_path %>
   <%= link_to 'Corsi caricati', uploaded_courses_path %>
 <% elsif @account.role == 'admin' %>
@@ -21,7 +21,7 @@
 
 <% if @account.role != 'admin' %>
   <h2>New Assistance Request</h2>
-  <%= form_with model: @assistance_request, url: create_assistance_request_account_path(@account), local: true do |form| %>
+  <%= form_with model: @assistance_request, url: account_path(@account), method: :post, local: true do |form| %>
     <div>
       <%= form.label :description %>
       <%= form.text_area :description %>

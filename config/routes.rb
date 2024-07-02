@@ -17,8 +17,6 @@ Rails.application.routes.draw do
     resources :assistance_requests
   end
   
-  post 'accounts/:id/create_assistance_request', to: 'accounts#create_assistance_request'
-  
   resources :accounts do
     member do
       post 'create_assistance_request'
@@ -29,6 +27,7 @@ Rails.application.routes.draw do
     end
   end   
 
+  post 'accounts/:id/create_assistance_request', to: 'accounts#create_assistance_request'
   get 'assistance_requests', to: 'accounts#assistance_requests'
 
   get 'bought_courses', to: 'courses#bought', as: 'bought_courses'
