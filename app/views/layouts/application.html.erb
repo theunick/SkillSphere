@@ -8,8 +8,7 @@
 
   <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
   <%= javascript_include_tag 'application' %>
-  <%= javascript_include_tag 'https://apis.google.com/js/api.js' %>
-  <%= javascript_include_tag 'https://accounts.google.com/gsi/client' %>
+  <%= javascript_include_tag 'google_picker' %>
 </head>
 
 <body>
@@ -19,7 +18,7 @@
       <%= link_to 'Account', accounts_path %>
     <% end %>
     <% if current_user&.seller? %>
-      <%= link_to 'New Course', new_course_path %>
+      <%= link_to 'New Course', new_course_path, id: 'new-course-link' %>
     <% end %>
   </nav>
   <%= yield %>

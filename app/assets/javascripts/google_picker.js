@@ -42,6 +42,7 @@ function maybeEnablePickerButton() {
     }
   } else {
     console.log('GIS or Picker not yet loaded');
+    setTimeout(maybeEnablePickerButton, 100);
   }
 }
 
@@ -120,8 +121,8 @@ function fetchFileDetails(fileId) {
   });
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-  console.log('DOM fully loaded and parsed');
+function initializePicker() {
+  console.log('Initializing Google Picker');
   const pickerButton = document.getElementById('google-picker-btn');
   if (pickerButton) {
     pickerButton.addEventListener('click', function() {
@@ -133,15 +134,7 @@ document.addEventListener('DOMContentLoaded', function() {
   } else {
     console.log('Google Picker button not found');
   }
-});
+}
 
-document.addEventListener('DOMContentLoaded', function() {
-  const reportedCoursesLink = document.getElementById('reported-courses-link');
-  if (reportedCoursesLink) {
-    console.log('Reported Courses Link:', reportedCoursesLink.href);
-    reportedCoursesLink.addEventListener('click', function() {
-      console.log('Reported Courses Link clicked');
-    });
-  }
-});
-
+document.addEventListener('DOMContentLoaded', initializePicker);
+document.addEventListener('turbo:load', initializePicker);
