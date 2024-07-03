@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_07_01_204412) do
+ActiveRecord::Schema.define(version: 2024_07_03_083825) do
 
   create_table "accounts", force: :cascade do |t|
     t.string "uid"
@@ -27,12 +27,14 @@ ActiveRecord::Schema.define(version: 2024_07_01_204412) do
   end
 
   create_table "assistance_requests", force: :cascade do |t|
-    t.integer "user_id", null: false
     t.text "description"
     t.string "status"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["user_id"], name: "index_assistance_requests_on_user_id"
+    t.integer "account_id"
+    t.text "message"
+    t.text "response"
+    t.boolean "hidden", default: false
   end
 
   create_table "assistances", force: :cascade do |t|
@@ -61,6 +63,8 @@ ActiveRecord::Schema.define(version: 2024_07_01_204412) do
     t.string "message"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "subject"
+    t.text "description"
     t.index ["account_id"], name: "index_reports_on_account_id"
     t.index ["course_id"], name: "index_reports_on_course_id"
   end
@@ -76,19 +80,6 @@ ActiveRecord::Schema.define(version: 2024_07_01_204412) do
     t.index ["user_id"], name: "index_reviews_on_user_id"
   end
 
-  create_table "users", force: :cascade do |t|
-    t.string "email", default: "", null: false
-    t.string "encrypted_password", default: "", null: false
-    t.string "reset_password_token"
-    t.datetime "reset_password_sent_at"
-    t.datetime "remember_created_at"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["email"], name: "index_users_on_email", unique: true
-    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
-  end
-
-  add_foreign_key "assistance_requests", "users"
   add_foreign_key "assistances", "users"
   add_foreign_key "courses", "accounts", column: "seller_id"
   add_foreign_key "reports", "accounts"

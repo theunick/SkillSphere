@@ -14,26 +14,52 @@
   <%= link_to 'Corsi comprati', bought_courses_path %>
   <%= link_to 'Corsi caricati', uploaded_courses_path %>
 <% elsif @account.role == 'admin' %>
-  <%= link_to 'Corsi segnalati' %>
-  <%= link_to 'Richieste assistenza', assistance_requests_path %>
+  <%= link_to 'Corsi segnalati', reported_courses_path %>
+  <%= link_to 'Richieste assistenza', all_assistances_path %>
   <%= link_to 'Lista utenti', admins_path %>
 <% end %>
 
 <% if @account.role != 'admin' %>
   <h2>Nuova Richiesta Assistenza</h2>
-  <%= form_with model: @assistance_request, url: account_path(@account), method: :post, local: true do |form| %>
+  <%= form_with model: AssistanceRequest.new, url: account_assistance_requests_path(@account), method: :post, local: true do |form| %>
     <div>
-      <%= form.label :descrizione %>
-      <%= form.text_area :description %>
+      <%= form.label :message, "Descrizione" %>
+      <%= form.text_area :message %>
     </div>
     
     <div>
-      <%= form.label :argomento %>
-      <%= form.select :status, options_for_select(['---', 'Transazioni', 'Corsi', 'Account']) %>
+      <%= form.label :status, "Argomento" %>
+      <%= form.select :status, options_for_select(['Altro', 'Transazioni', 'Corsi', 'Account']) %>
     </div>
     
     <div>
       <%= form.submit 'Invia' %>
     </div>
-  <% end %>  
+  <% end %>
+
+  <% if flash[:notice] %>
+    <p class="notice"><%= flash[:notice] %></p>
+  <% elsif flash[:alert] %>
+    <p class="alert"><%= flash[:alert] %></p>
+  <% end %>
+
+  <h2>Risposte alle Richieste di Assistenza</h2>
+  <% if @account.assistance_requests.any? %>
+    <ul>
+      <% @account.assistance_requests.each do |request| %>
+        <li>
+          <p><strong>Messaggio:</strong> <%= request.message %></p>
+          <p><strong>Status:</strong> <%= request.status %></p>
+          <% if request.response.present? %>
+            <p><strong>Risposta:</strong> <%= request.response %></p>
+            <%= link_to 'Elimina Richiesta', account_assistance_request_path(@account, request), method: :delete, data: { confirm: 'Sei sicuro di voler eliminare questa richiesta di assistenza?' }, class: 'btn btn-danger' %>
+          <% else %>
+            <p><em>In attesa di risposta</em></p>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p>Non ci sono richieste di assistenza.</p>
+  <% end %>
 <% end %>

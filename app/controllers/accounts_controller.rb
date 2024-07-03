@@ -1,5 +1,5 @@
 class AccountsController < ApplicationController
-  before_action :set_account, only: %i[show edit update destroy new_assistance_request create_assistance_request]
+  before_action :set_account, only: %i[show edit update destroy new_assistance_request create_assistance_request make_admin]
 
   def index
     @account = current_user
@@ -67,10 +67,15 @@ class AccountsController < ApplicationController
     @assistance_requests = AssistanceRequest.all
   end
 
+  def make_admin
+    @account.update(role: 'admin')
+    redirect_to admins_path, notice: 'L\'utente è stato promosso ad admin.'
+  end
+
   private
 
   def assistance_request_params
-    params.require(:assistance_request).permit(:description, :status)
+    params.require(:assistance_request).permit(:message, :status)
   end
 
   private 

@@ -17,7 +17,6 @@
     <%= link_to 'Home', root_path, class: 'navbar-home-button' %>
     <% if session[:user_id] %>
       <%= link_to 'Account', accounts_path %>
-      <%= link_to 'Report', new_report_path %>
     <% end %>
     <% if current_user&.seller? %>
       <%= link_to 'Crea corso', new_course_path %>

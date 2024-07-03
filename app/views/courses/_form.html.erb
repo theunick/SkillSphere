@@ -38,13 +38,8 @@
   </div>
 
   <div class="field">
-    <%= form.label :file %>
-    <%= form.file_field :file %>
-  </div>
-
-  <div class="field">
     <%= form.label :google_drive_file, "Seleziona un file da Google Drive" %>
-    <button type="button" id="google-picker-btn">Apri Google Drive Picker</button>
+    <button type="button" id="google-picker-btn">Google Drive</button>
   </div>
 
   <%= form.hidden_field :google_drive_file_ids, id: 'google-drive-file-ids' %>

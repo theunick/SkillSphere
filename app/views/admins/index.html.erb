@@ -6,7 +6,7 @@
       <th>ID</th>
       <th>Nome</th>
       <th>Email</th>
-      <th>Role</th>
+      <th>Ruolo</th>
       <th>Data di Registrazione</th>
       <th>Azioni</th> 
     </tr>
@@ -20,7 +20,10 @@
         <td><%= user.role %></td>
         <td><%= user.created_at.strftime('%d/%m/%Y') %></td>
         <td>
-          <%= button_to 'Elimina Account', account_path(user), method: :delete, data: { confirm: 'Are you sure?' } %>
+          <%= button_to 'Elimina Account', account_path(user), method: :delete, data: { confirm: 'Sei sicuro?' } %>
+          <% unless user.admin? %>
+            <%= button_to 'Rendi Admin', make_admin_account_path(user), method: :patch, data: { confirm: 'Sei sicuro di voler promuovere questo utente ad admin?' } %>
+          <% end %>
         </td> 
       </tr>
     <% end %>

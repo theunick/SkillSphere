@@ -1,0 +1,44 @@
+<h1>Richieste di Assistenza</h1>
+
+<% if @assistance_requests.any? %>
+  <ul>
+    <% @assistance_requests.each do |request| %>
+      <li id="request-<%= request.id %>">
+        <p><strong>Utente:</strong> <%= request.account.name %> (<%= request.account.email %>)</p>
+        <p><strong>Messaggio:</strong> <%= request.message %></p>
+        <p><strong>Status:</strong> <%= request.status %></p>
+        <% if request.response.present? %>
+          <p><strong>Risposta:</strong> <%= request.response %></p>
+        <% else %>
+          <%= form_with model: request, url: account_assistance_request_path(request.account, request), method: :patch, local: true, data: { remote: true } do |form| %>
+            <div>
+              <%= form.label :response, "Risposta" %>
+              <%= form.text_area :response %>
+            </div>
+            <div>
+              <%= form.submit 'Invia' %>
+            </div>
+          <% end %>
+        <% end %>
+        <%= link_to 'Elimina Richiesta', account_assistance_request_path(request.account, request), method: :delete, data: { confirm: 'Sei sicuro di voler nascondere questa richiesta di assistenza?', remote: true }, class: 'btn btn-danger' %>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>Non ci sono richieste di assistenza.</p>
+<% end %>
+
+<%= link_to 'Indietro', accounts_path %>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('ajax:success', function(event) {
+      var detail = event.detail;
+      var requestId = detail[0].id;
+      var requestElement = document.getElementById('request-' + requestId);
+      if (requestElement) {
+        requestElement.remove();
+      }
+    });
+  });
+</script>
