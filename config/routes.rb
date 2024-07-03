@@ -13,6 +13,8 @@ Rails.application.routes.draw do
   resources :accounts do
     resources :assistance_requests, only: [:create, :destroy, :index, :update]
     member do
+      patch 'make_customer'
+      patch 'make_seller'
       patch 'make_admin'
     end
   end
