@@ -18,7 +18,7 @@
       <%= link_to 'Account', accounts_path %>
     <% end %>
     <% if current_user&.seller? %>
-      <%= link_to 'New Course', new_course_path, id: 'new-course-link' %>
+      <%= link_to 'Crea corso', new_course_path, id: 'new-course-link' %>
     <% end %>
   </nav>
   <%= yield %>

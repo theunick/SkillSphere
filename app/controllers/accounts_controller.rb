@@ -1,5 +1,5 @@
 class AccountsController < ApplicationController
-  before_action :set_account, only: %i[show edit update destroy new_assistance_request create_assistance_request make_admin]
+  before_action :set_account, only: %i[show edit update destroy new_assistance_request create_assistance_request make_customer make_seller make_admin]
 
   def index
     @account = current_user
@@ -24,17 +24,6 @@ class AccountsController < ApplicationController
       redirect_to @account, notice: 'Account was successfully created.'
     else
       render :new
-    end
-  end
-
-  def update
-    @account = Account.find(params[:id])
-    if @account.role == 'customer'
-      @account.update(role: 'seller')
-      redirect_to accounts_path(@account), notice: 'Role updated to seller.'
-    elsif @account.role == 'seller'
-      @account.update(role: 'customer')
-      redirect_to accounts_path(@account), notice: 'Role updated to customer.'
     end
   end
 
@@ -73,6 +62,16 @@ class AccountsController < ApplicationController
 
   def assistance_requests
     @assistance_requests = AssistanceRequest.all
+  end
+
+  def make_customer
+    @account.update(role: 'customer')
+    redirect_to accounts_path(@account), notice: 'Il ruolo è stato cambiato a customer.'
+  end
+
+  def make_seller
+    @account.update(role: 'seller')
+    redirect_to accounts_path(@account), notice: 'Il ruolo è stato cambiato a seller.'
   end
 
   def make_admin
