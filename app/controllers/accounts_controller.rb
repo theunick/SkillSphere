@@ -28,13 +28,21 @@ class AccountsController < ApplicationController
   end
 
   def destroy
-    @current = Account.find(params[:id])
-    if @current.id == @account.id
-      reset_session
+    @account.assistance_requests.destroy_all
+    @account.courses.each do |course|
+      # Eliminare le recensioni collegate ai corsi di questo account
+      course.reviews.destroy_all
+      # Eliminare i report collegati ai corsi di questo account
+      course.reports.destroy_all
     end
+    @account.courses.destroy_all
+    @account.reports.destroy_all
+
     @account.destroy
-    reset_session
-    redirect_to root_path, notice: 'Account deleted successfully.'
+    reset_session if @account == current_user
+    redirect_to admins_path, notice: 'Account deleted successfully.'
+  rescue ActiveRecord::InvalidForeignKey => e
+    redirect_to account_path(@account), alert: "Failed to delete account: #{e.message}"
   end
 
   def new_assistance_request
