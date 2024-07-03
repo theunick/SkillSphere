@@ -18,4 +18,6 @@
 //= require rails-ujs
 //= require turbolinks
 //= require_tree .
+//= require google_picker
+
 
