@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_07_02_164417) do
+ActiveRecord::Schema.define(version: 2024_07_03_083825) do
 
   create_table "accounts", force: :cascade do |t|
     t.string "uid"
@@ -34,6 +34,7 @@ ActiveRecord::Schema.define(version: 2024_07_02_164417) do
     t.integer "account_id"
     t.text "message"
     t.text "response"
+    t.boolean "hidden", default: false
   end
 
   create_table "assistances", force: :cascade do |t|

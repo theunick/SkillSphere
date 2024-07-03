@@ -1,9 +1,12 @@
 class AssistanceRequestsController < ApplicationController
   before_action :set_account, only: [:create, :destroy, :update]
-  before_action :authenticate_admin!, only: [:index, :update]
 
   def index
-    @assistance_requests = AssistanceRequest.includes(:account).all
+    if current_user.admin?
+      @assistance_requests = AssistanceRequest.visible
+    else
+      @assistance_requests = current_user.assistance_requests
+    end
   end
 
   def create
@@ -20,19 +23,40 @@ class AssistanceRequestsController < ApplicationController
   def update
     @assistance_request = AssistanceRequest.find(params[:id])
     if @assistance_request.update(response_params)
-      redirect_to all_assistances_path, notice: 'Risposta inviata con successo.'
+      respond_to do |format|
+        format.html { redirect_to all_assistances_path, notice: 'Risposta inviata con successo.' }
+        format.json { render json: { id: @assistance_request.id } }
+      end
     else
       render :index, alert: 'Errore nell\'invio della risposta.'
     end
   end
 
   def destroy
-    @assistance_request = @account.assistance_requests.find(params[:id])
-    @assistance_request.destroy
-    redirect_to account_assistance_requests_path(@account), notice: 'Richiesta di assistenza eliminata con successo.'
+    @assistance_request = AssistanceRequest.find_by(id: params[:id], account_id: @account.id)
+    if @assistance_request
+      @assistance_request.update(hidden: true)
+      respond_to do |format|
+        format.html {
+          if current_user.admin?
+            redirect_to all_assistances_path, notice: 'Richiesta di assistenza nascosta con successo.'
+          else
+            @assistance_request.destroy
+            redirect_to accounts_path, notice: 'Richiesta di assistenza eliminata con successo.'
+          end
+        }
+        format.json { render json: { id: @assistance_request.id, action: 'destroy' } }
+      end
+    else
+      redirect_to accounts_path, alert: 'Richiesta di assistenza non trovata.'
+    end
   end
 
   private
+
+  def set_account
+    @account = Account.find(params[:account_id])
+  end
 
   def assistance_request_params
     params.require(:assistance_request).permit(:message, :status)
@@ -40,15 +64,5 @@ class AssistanceRequestsController < ApplicationController
 
   def response_params
     params.require(:assistance_request).permit(:response)
-  end
-
-  def set_account
-    @account = Account.find(params[:account_id])
-  end
-
-  def authenticate_admin!
-    unless current_user&.admin?
-      redirect_to root_path, alert: 'Accesso non autorizzato.'
-    end
   end
 end

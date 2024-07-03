@@ -11,7 +11,7 @@ Rails.application.routes.draw do
   root 'home#index'
   resources :courses
   resources :accounts do
-    resources :assistance_requests, only: [:create, :destroy, :index]
+    resources :assistance_requests, only: [:create, :destroy, :index, :update]
   end
 
   resources :reports, only: [:create, :destroy]
