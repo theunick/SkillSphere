@@ -22,3 +22,32 @@
     <% end %>
   </ul>
 </p>
+
+<% if current_user %>
+  <%= button_to 'Aggiungi al carrello', add_to_cart_course_path(@course), method: :post, class: 'btn btn-primary' %>
+<% else %>
+  <p>Devi essere loggato per aggiungere il corso al carrello.</p>
+<% end %>
+
+<%= link_to 'Modifica', edit_course_path(@course), class: 'btn btn-secondary' if current_seller == @course.seller %>
+<%= link_to 'Indietro', courses_path, class: 'btn btn-secondary' %>
+
+<h2>Segnala il corso</h2>
+<%= form_with model: @report, url: reports_path, local: true do |form| %>
+  <div class="field">
+    <%= form.label :subject, "Motivo della segnalazione" %>
+    <%= form.select :subject, options_for_select(["Contenuto inappropriato", "Spam", "Violazione del copyright", "Altro"]) %>
+  </div>
+
+  <div class="field" id="other_reason_field" style="display:block;">
+    <%= form.label :description, "Descrizione" %>
+    <%= form.text_area :description %>
+  </div>
+
+  <%= form.hidden_field :course_id, value: @course.id %>
+
+  <div class="actions">
+    <%= form.submit "Invia segnalazione" %>
+  </div>
+<% end %>
+

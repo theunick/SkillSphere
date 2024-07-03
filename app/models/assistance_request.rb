@@ -1,5 +1,9 @@
 class AssistanceRequest < ApplicationRecord
   belongs_to :account
-  validates :description, presence: true
-  validates :status, inclusion: { in: %w[Pending In\ Progress Resolved] }
+
+  validates :message, presence: true
+  validates :status, presence: true, inclusion: { in: %w(Altro Transazioni Corsi Account) }
+
+  scope :visible, -> { where(hidden: false) }
+  
 end

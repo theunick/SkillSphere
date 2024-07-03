@@ -2,7 +2,7 @@ class Account < ApplicationRecord
   enum role: { customer: 0, seller: 1, admin: 2 }
 
   has_many :courses, foreign_key: :seller_id
-  has_many :assistance_requests
+  has_many :assistance_requests, dependent: :destroy
 
   def self.from_omniauth(auth)
     where(uid: auth.uid, provider: auth.provider).first_or_initialize.tap do |account|
