@@ -13,6 +13,7 @@
   <%= button_to 'Elimina Account', account_path(@account), method: :delete, data: { confirm: 'Are you sure?' } %>
   <%= link_to 'Corsi comprati', bought_courses_path %>
   <%= link_to 'Corsi caricati', uploaded_courses_path %>
+  <%= link_to 'Statistiche', statistics_seller_path(current_user) %>
 <% elsif @account.role == 'admin' %>
   <%= link_to 'Corsi segnalati', reported_courses_path %>
   <%= link_to 'Richieste assistenza', all_assistances_path %>
