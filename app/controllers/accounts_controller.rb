@@ -79,6 +79,10 @@ class AccountsController < ApplicationController
     redirect_to admins_path, notice: 'L\'utente è stato promosso ad admin.'
   end
 
+  def bought_courses
+    @bought_courses = current_user.bought_courses
+  end
+
   private
 
   def assistance_request_params

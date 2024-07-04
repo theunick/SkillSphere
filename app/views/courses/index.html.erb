@@ -3,7 +3,7 @@
 
 <% if @courses.any? %>
   <ul>
-    <% @courses.each do |course| %>
+    <% @courses.visible.each do |course| %>
       <li>
         <%= link_to course.title, course_path(course) %>
         <p><%= course.description %></p>

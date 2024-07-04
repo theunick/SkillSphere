@@ -50,6 +50,9 @@ gem 'omniauth-rails_csrf_protection'
 
 gem 'figaro'
 
+gem 'impressionist'
+
+
 gem 'canard', '~> 0.6.2.pre'
 
 gem 'devise' 
@@ -70,5 +73,7 @@ gem 'webpacker', '~> 5.0'
 gem 'turbolinks', '~> 5'
 
 gem 'hotwire-rails'
+
+
 
 

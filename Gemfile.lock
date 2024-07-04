@@ -146,6 +146,8 @@ GEM
     httpclient (2.8.3)
     i18n (1.14.5)
       concurrent-ruby (~> 1.0)
+    impressionist (2.0.0)
+      nokogiri (~> 1)
     jbuilder (2.12.0)
       actionview (>= 5.0.0)
       activesupport (>= 5.0.0)
@@ -353,6 +355,7 @@ DEPENDENCIES
   google-api-client (~> 0.53.0)
   google-apis-drive_v2 (~> 0.1)
   hotwire-rails
+  impressionist
   jbuilder (~> 2.7)
   listen (~> 3.3)
   omniauth (~> 2.0)
