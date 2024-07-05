@@ -1,6 +1,6 @@
 class ApplicationController < ActionController::Base
   before_action :set_current_user
-  before_action :authenticate_seller!, only: [:new, :create]
+  before_action :authenticate_user!, only: [:new, :create]
 
   helper_method :current_user, :current_seller
 
