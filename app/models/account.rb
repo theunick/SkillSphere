@@ -5,7 +5,7 @@ class Account < ApplicationRecord
   has_many :assistance_requests, dependent: :destroy
   has_many :reports, dependent: :destroy
   has_many :reviews, dependent: :destroy
-  has_many :purchases
+  has_many :purchases, dependent: :destroy
   has_many :bought_courses, through: :purchases, source: :course
 
   def self.from_omniauth(auth)
