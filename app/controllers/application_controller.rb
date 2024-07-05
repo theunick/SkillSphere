@@ -23,4 +23,11 @@ class ApplicationController < ActionController::Base
       redirect_to root_path, alert: 'You need to sign in as a seller to access this page.'
     end
   end
+
+  def authenticate_user!
+    unless current_user
+      redirect_to new_session_path, alert: "Devi essere loggato per accedere a questa pagina."
+    end
+  end
+  
 end

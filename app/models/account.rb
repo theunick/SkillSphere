@@ -4,6 +4,7 @@ class Account < ApplicationRecord
   has_many :courses, foreign_key: :seller_id, dependent: :destroy
   has_many :assistance_requests, dependent: :destroy
   has_many :reports, dependent: :destroy
+  has_many :reviews, dependent: :destroy
   has_many :purchases
   has_many :bought_courses, through: :purchases, source: :course
 

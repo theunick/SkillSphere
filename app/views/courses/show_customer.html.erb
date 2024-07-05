@@ -1,7 +1,7 @@
 <% if current_user && current_user.bought_courses.include?(@course) %>
   <p>
-  <strong>Hai acquistato il corso</strong>
-</p>
+    <strong>Hai acquistato il corso</strong>
+  </p>
 <% end %>
 <p>
   <strong>Titolo:</strong>
@@ -47,8 +47,6 @@
 <% end %>
 
 <%= link_to 'Modifica', edit_course_path(@course), class: 'btn btn-secondary' if current_seller == @course.seller %>
-<%= button_to 'Elimina', course_path(@course), method: :delete, data: { confirm: 'Sei sicuro di voler eliminare questo corso?' }, class: 'btn btn-danger' if current_seller == @course.seller %>
-
 <%= link_to 'Indietro', courses_path, class: 'btn btn-secondary' %>
 
 <h2>Segnala il corso</h2>
@@ -68,4 +66,36 @@
   <div class="actions">
     <%= form.submit "Invia segnalazione" %>
   </div>
+<% end %>
+
+<h2>Recensioni</h2>
+<% if @course.reviews.any? %>
+  <ul>
+    <% @course.reviews.each do |review| %>
+      <li>
+        <p><strong><%= review.account.name %></strong> ha detto:</p>
+        <p><%= review.content %></p>
+        <p>Valutazione: <%= review.rating %></p>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>Non ci sono recensioni per questo corso.</p>
+<% end %>
+
+<% if current_user && current_user.bought_courses.include?(@course) %>
+  <h3>Aggiungi una recensione</h3>
+  <%= form_with model: [@course, @course.reviews.new], local: true do |form| %>
+    <div class="field">
+      <%= form.label :content, "Recensione" %>
+      <%= form.text_area :content %>
+    </div>
+    <div class="field">
+      <%= form.label :rating, "Valutazione" %>
+      <%= form.select :rating, options_for_select(1..5) %>
+    </div>
+    <div class="actions">
+      <%= form.submit "Invia" %>
+    </div>
+  <% end %>
 <% end %>

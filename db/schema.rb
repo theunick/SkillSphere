@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_07_04_153851) do
+ActiveRecord::Schema.define(version: 2024_07_05_084225) do
 
   create_table "accounts", force: :cascade do |t|
     t.string "uid"
@@ -107,14 +107,13 @@ ActiveRecord::Schema.define(version: 2024_07_04_153851) do
   end
 
   create_table "reviews", force: :cascade do |t|
-    t.integer "user_id", null: false
     t.integer "course_id", null: false
     t.text "content"
     t.integer "rating"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "account_id"
     t.index ["course_id"], name: "index_reviews_on_course_id"
-    t.index ["user_id"], name: "index_reviews_on_user_id"
   end
 
   add_foreign_key "assistances", "users"
@@ -124,5 +123,4 @@ ActiveRecord::Schema.define(version: 2024_07_04_153851) do
   add_foreign_key "reports", "accounts"
   add_foreign_key "reports", "courses"
   add_foreign_key "reviews", "courses"
-  add_foreign_key "reviews", "users"
 end

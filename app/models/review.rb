@@ -1,5 +1,5 @@
 class Review < ApplicationRecord
-  belongs_to :user
+  belongs_to :account
   belongs_to :course
 
   validates :content, :rating, presence: true
