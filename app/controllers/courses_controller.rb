@@ -70,7 +70,6 @@ class CoursesController < ApplicationController
 
   def show_customer
     @course = Course.find(params[:id])
-    impressionist(@course)
   end
 
   private
