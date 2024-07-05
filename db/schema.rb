@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_07_05_084225) do
+ActiveRecord::Schema.define(version: 2024_07_05_101456) do
 
   create_table "accounts", force: :cascade do |t|
     t.string "uid"
@@ -43,6 +43,22 @@ ActiveRecord::Schema.define(version: 2024_07_05_084225) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["user_id"], name: "index_assistances_on_user_id"
+  end
+
+  create_table "cart_items", force: :cascade do |t|
+    t.integer "cart_id", null: false
+    t.integer "course_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["cart_id"], name: "index_cart_items_on_cart_id"
+    t.index ["course_id"], name: "index_cart_items_on_course_id"
+  end
+
+  create_table "carts", force: :cascade do |t|
+    t.integer "account_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["account_id"], name: "index_carts_on_account_id"
   end
 
   create_table "courses", force: :cascade do |t|
@@ -117,6 +133,9 @@ ActiveRecord::Schema.define(version: 2024_07_05_084225) do
   end
 
   add_foreign_key "assistances", "users"
+  add_foreign_key "cart_items", "carts"
+  add_foreign_key "cart_items", "courses"
+  add_foreign_key "carts", "accounts"
   add_foreign_key "courses", "accounts", column: "seller_id"
   add_foreign_key "purchases", "accounts"
   add_foreign_key "purchases", "courses"

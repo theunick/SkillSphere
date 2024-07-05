@@ -20,6 +20,9 @@
     <% if current_user&.seller? %>
       <%= link_to 'Crea corso', new_course_path, id: 'new-course-link' %>
     <% end %>
+    <% if current_user && current_user.cart %>
+        <%= link_to 'Carrello', cart_path(current_user.cart) %>
+    <% end %>
   </nav>
   <%= yield %>
   <div id="result"></div>

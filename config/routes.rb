@@ -25,6 +25,14 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :carts, only: [:show] do
+    member do
+      post 'add_course'
+      delete 'remove_course'
+      post 'purchase'
+    end
+  end
+
   resources :reports, only: [:create, :destroy]
   get 'reported_courses', to: 'reports#index', as: 'reported_courses'
   get 'assistance_requests', to: 'assistance_requests#index', as: 'all_assistances'
