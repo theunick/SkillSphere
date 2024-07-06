@@ -4,6 +4,11 @@ class Account < ApplicationRecord
   has_many :courses, foreign_key: :seller_id, dependent: :destroy
   has_many :assistance_requests, dependent: :destroy
   has_many :reports, dependent: :destroy
+  has_many :reviews, dependent: :destroy
+  has_many :purchases, dependent: :destroy
+  has_many :bought_courses, through: :purchases, source: :course
+  has_one :cart, dependent: :destroy
+  after_create :create_cart
 
   def self.from_omniauth(auth)
     where(uid: auth.uid, provider: auth.provider).first_or_initialize.tap do |account|
@@ -20,4 +25,9 @@ class Account < ApplicationRecord
   def seller?
     self.role == 'seller'
   end
+
+  def create_cart
+    Cart.create(account: self)
+  end
+
 end

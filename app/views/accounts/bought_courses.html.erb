@@ -1,0 +1,16 @@
+<h1>Corsi Comprati</h1>
+
+<% if @bought_courses.any? %>
+  <ul>
+    <% @bought_courses.each do |course| %>
+      <li>
+        <%= link_to course.title, show_customer_course_path(course) %>
+        <p><%= course.description %></p>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>Non hai ancora acquistato nessun corso.</p>
+<% end %>
+
+<%= link_to 'Indietro', accounts_path %>

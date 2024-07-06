@@ -1,9 +1,36 @@
-<!-- app/views/courses/index.html.erb -->
 <h1>Tutti i corsi</h1>
+
+<%= form_with(url: courses_path, method: :get, local: true, class: 'search-form') do %>
+  <div class="form-group">
+    <%= label_tag :search, "Cerca per nome:" %>
+    <%= text_field_tag :search, params[:search] %>
+  </div>
+  
+  <div class="form-group">
+    <%= label_tag :category, "Filtra per categoria:" %>
+    <%= select_tag :category, options_for_select(Course.distinct.pluck(:category), params[:category]), include_blank: true %>
+  </div>
+  
+  <div class="form-group">
+    <%= label_tag :min_price, "Prezzo minimo:" %>
+    <%= number_field_tag :min_price, params[:min_price] %>
+  </div>
+  
+  <div class="form-group">
+    <%= label_tag :max_price, "Prezzo massimo:" %>
+    <%= number_field_tag :max_price, params[:max_price] %>
+  </div>
+  
+  <div class="form-group">
+    <%= label_tag :max_price, "Applica filtri" %>
+    <%= submit_tag 'Filtra' %>
+  </div>
+<% end %>
+
 
 <% if @courses.any? %>
   <ul>
-    <% @courses.each do |course| %>
+    <% @courses.visible.each do |course| %>
       <li>
         <%= link_to course.title, course_path(course) %>
         <p><%= course.description %></p>

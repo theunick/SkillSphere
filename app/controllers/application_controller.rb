@@ -1,6 +1,6 @@
 class ApplicationController < ActionController::Base
   before_action :set_current_user
-  before_action :authenticate_seller!, only: [:new, :create]
+  before_action :authenticate_user!, only: [:new, :create]
 
   helper_method :current_user, :current_seller
 
@@ -23,4 +23,11 @@ class ApplicationController < ActionController::Base
       redirect_to root_path, alert: 'You need to sign in as a seller to access this page.'
     end
   end
+
+  def authenticate_user!
+    unless current_user
+      redirect_to new_session_path, alert: "Devi essere loggato per accedere a questa pagina."
+    end
+  end
+  
 end

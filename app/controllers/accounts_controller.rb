@@ -28,22 +28,36 @@ class AccountsController < ApplicationController
   end
 
   def destroy
-    @account.assistance_requests.destroy_all
-    @account.courses.each do |course|
-      # Eliminare le recensioni collegate ai corsi di questo account
-      course.reviews.destroy_all
-      # Eliminare i report collegati ai corsi di questo account
-      course.reports.destroy_all
+    if @account == current_user
+      reset_session
+      flash[:notice] = 'Your account has been deleted successfully.'
+      if @account.destroy
+        redirect_to root_path and return
+      else
+        redirect_to root_path, alert: 'There was an issue deleting your account.'
+        return
+      end
+    else
+      ActiveRecord::Base.transaction do
+        @account.assistance_requests.destroy_all
+        @account.courses.each do |course|
+          course.reviews.destroy_all
+          course.reports.destroy_all
+        end
+        @account.courses.destroy_all
+        @account.reports.destroy_all
+  
+        if @account.destroy
+          redirect_to admins_path, notice: 'Account deleted successfully.'
+        else
+          raise ActiveRecord::Rollback
+        end
+      end
     end
-    @account.courses.destroy_all
-    @account.reports.destroy_all
-
-    @account.destroy
-    reset_session if @account == current_user
-    redirect_to admins_path, notice: 'Account deleted successfully.'
   rescue ActiveRecord::InvalidForeignKey => e
-    redirect_to account_path(@account), alert: "Failed to delete account: #{e.message}"
+    redirect_to accounts_path, alert: "Failed to delete account: #{e.message}"
   end
+  
 
   def new_assistance_request
     @account = Account.find(params[:id])
@@ -77,6 +91,10 @@ class AccountsController < ApplicationController
   def make_admin
     @account.update(role: 'admin')
     redirect_to admins_path, notice: 'L\'utente è stato promosso ad admin.'
+  end
+
+  def bought_courses
+    @bought_courses = current_user.bought_courses
   end
 
   private

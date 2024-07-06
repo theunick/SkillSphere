@@ -1,13 +1,34 @@
 class CoursesController < ApplicationController
+
+  impressionist actions: [:show, :show_customer]
+  
   before_action :set_course, only: %i[ show edit update destroy ]
 
-  # GET /courses or /courses.json
   def index
     @courses = Course.all
+
+    if params[:search].present?
+      @courses = @courses.where('title LIKE ?', "%#{params[:search]}%")
+    end
+
+    if params[:category].present?
+      @courses = @courses.where(category: params[:category])
+    end
+
+    if params[:min_price].present?
+      @courses = @courses.where('price >= ?', params[:min_price])
+    end
+
+    if params[:max_price].present?
+      @courses = @courses.where('price <= ?', params[:max_price])
+    end
   end
 
   # GET /courses/1 or /courses/1.json
   def show
+    if @course.hidden?
+      redirect_to courses_path, alert: 'Questo corso non è disponibile.'
+    end
     @report = Report.new
   end
 
@@ -42,7 +63,7 @@ class CoursesController < ApplicationController
 
   # DELETE /courses/1 or /courses/1.json
   def destroy
-    @course.destroy
+    @course.update(hidden: true)
     redirect_to courses_url, notice: 'Course was successfully destroyed.'
   end
 
@@ -51,15 +72,33 @@ class CoursesController < ApplicationController
     @courses = current_seller.courses
   end
 
+  def purchase
+    @course = Course.find(params[:id])
+    @purchase = current_user.purchases.build(course: @course)
+  
+    if @purchase.save
+      redirect_to bought_courses_path, notice: 'Course was successfully purchased.'
+    else
+      redirect_to course_path(@course), alert: "There was a problem with your purchase: #{@purchase.errors.full_messages.join(', ')}"
+    end
+  end
+
+  def show_customer
+    @course = Course.find(params[:id])
+  end
+
   private
 
   # Use callbacks to share common setup or constraints between actions.
   def set_course
     @course = Course.find(params[:id])
+    impressionist(@course)
   end
+
+  
 
   # Only allow a list of trusted parameters through.
   def course_params
-    params.require(:course).permit(:title, :code, :category, :description, :google_drive_file_ids)
+    params.require(:course).permit(:title, :code, :category, :description, :google_drive_file_ids, :price)
   end
 end

@@ -1,0 +1,27 @@
+<h1>Statistiche dei tuoi Corsi</h1>
+
+<p><strong>Guadagni Totali:</strong> <%= number_to_currency(@total_earnings) %></p>
+
+<h2>Statistiche per Corso</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Corso</th>
+      <th>Acquisti</th>
+      <th>Guadagni</th>
+      <th>Visite</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @courses_statistics.each do |course| %>
+      <tr>
+        <td><%= link_to course.title, course_path(course) %></td>
+        <td><%= course.purchases_count %></td>
+        <td><%= number_to_currency(course.total_earnings) %></td>
+        <td><%= course.impressionist_count %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= link_to 'Indietro', accounts_path %>

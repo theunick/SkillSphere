@@ -1,5 +1,13 @@
 <h1>Lista Utenti</h1>
 
+<%= form_with(url: admins_path, method: :get, local: true) do %>
+  <div>
+    <%= label_tag :role, "Filtra per tipo di account:" %>
+    <%= select_tag :role, options_for_select([['Tutti', ''], ['Customer', 'customer'], ['Seller', 'seller'], ['Admin', 'admin']], selected: @role_filter), include_blank: true %>
+    <%= submit_tag 'Filtra' %>
+  </div>
+<% end %>
+
 <table>
   <thead>
     <tr>
@@ -8,23 +16,23 @@
       <th>Email</th>
       <th>Ruolo</th>
       <th>Data di Registrazione</th>
-      <th>Azioni</th> 
+      <th>Azioni</th>
     </tr>
   </thead>
   <tbody>
-    <% @users.each do |user| %>
+    <% @accounts.each do |account| %>
       <tr>
-        <td><%= user.id %></td>
-        <td><%= user.name %></td>
-        <td><%= user.email %></td>
-        <td><%= user.role %></td>
-        <td><%= user.created_at.strftime('%d/%m/%Y') %></td>
+        <td><%= account.id %></td>
+        <td><%= account.name %></td>
+        <td><%= account.email %></td>
+        <td><%= account.role %></td>
+        <td><%= account.created_at.strftime('%d/%m/%Y') %></td>
         <td>
-          <%= button_to 'Elimina Account', account_path(user), method: :delete, data: { confirm: 'Sei sicuro?' } %>
-          <% unless user.admin? %>
-            <%= button_to 'Rendi Admin', make_admin_account_path(user), method: :patch, data: { confirm: 'Sei sicuro di voler promuovere questo utente ad admin?' } %>
+          <%= button_to 'Elimina Account', account_path(account), method: :delete, data: { confirm: 'Sei sicuro?' } %>
+          <% unless account.admin? %>
+            <%= button_to 'Rendi Admin', make_admin_account_path(account), method: :patch, data: { confirm: 'Sei sicuro di voler promuovere questo utente ad admin?' } %>
           <% end %>
-        </td> 
+        </td>
       </tr>
     <% end %>
   </tbody>
