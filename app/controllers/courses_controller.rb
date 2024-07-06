@@ -4,9 +4,24 @@ class CoursesController < ApplicationController
   
   before_action :set_course, only: %i[ show edit update destroy ]
 
-  # GET /courses or /courses.json
   def index
-    @courses = Course.where(hidden: false)
+    @courses = Course.all
+
+    if params[:search].present?
+      @courses = @courses.where('title LIKE ?', "%#{params[:search]}%")
+    end
+
+    if params[:category].present?
+      @courses = @courses.where(category: params[:category])
+    end
+
+    if params[:min_price].present?
+      @courses = @courses.where('price >= ?', params[:min_price])
+    end
+
+    if params[:max_price].present?
+      @courses = @courses.where('price <= ?', params[:max_price])
+    end
   end
 
   # GET /courses/1 or /courses/1.json
