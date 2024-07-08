@@ -6,12 +6,15 @@ Rails.application.routes.draw do
       post 'upload_file'
       get 'share_drive'
       post 'add_to_cart'
-      post 'purchase', to: 'purchases#create'
       get 'statistics'
       get 'show_customer'
+      get 'payment', to: 'payments#new'   # Aggiungi questa riga per mostrare il modulo di pagamento
+      post 'pay', to: 'payments#create'   # Aggiungi questa riga per gestire il pagamento
     end
     resources :reviews, only: [:create]
   end
+
+  resources :purchases, only: [:create]
 
   get 'home/index'
   root 'home#index'

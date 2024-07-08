@@ -34,7 +34,7 @@
     <p>Errore: nessun carrello trovato per l'utente corrente.</p>
   <% end %>
   <% unless current_user.bought_courses.include?(@course) %>
-    <%= button_to 'Compra', purchase_course_path(@course), method: :post, class: 'btn btn-primary' %>
+    <%= button_to 'Compra', payment_course_path(@course), method: :get, class: 'btn btn-primary' %>
   <% end %>
 <% else %>
   <p>Devi essere loggato per aggiungere il corso al carrello.</p>
