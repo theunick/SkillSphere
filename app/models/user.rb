@@ -1,6 +1,9 @@
 # app/models/user.rb
 class User < ApplicationRecord
 
+  has_one :cart, dependent: :destroy
+  has_many :purchases, dependent: :destroy
+  
   has_many :courses, foreign_key: :seller_id
 
   devise :database_authenticatable, :registerable,
