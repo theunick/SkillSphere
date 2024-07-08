@@ -363,6 +363,7 @@ DEPENDENCIES
   impressionist
   jbuilder (~> 2.7)
   listen (~> 3.3)
+  net-protocol
   omniauth (~> 2.0)
   omniauth-google-oauth2 (~> 1.0)
   omniauth-rails_csrf_protection
