@@ -6,7 +6,7 @@ Rails.application.routes.draw do
       post 'upload_file'
       get 'share_drive'
       post 'add_to_cart'
-      post 'purchase'
+      post 'purchase', to: 'purchases#create'
       get 'statistics'
       get 'show_customer'
     end

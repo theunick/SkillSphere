@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_07_05_101456) do
+ActiveRecord::Schema.define(version: 2024_07_08_104432) do
 
   create_table "accounts", force: :cascade do |t|
     t.string "uid"
@@ -72,6 +72,7 @@ ActiveRecord::Schema.define(version: 2024_07_05_101456) do
     t.json "google_drive_file_ids"
     t.decimal "price"
     t.boolean "hidden", default: false
+    t.string "name"
     t.index ["seller_id"], name: "index_courses_on_seller_id"
   end
 
