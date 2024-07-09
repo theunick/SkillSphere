@@ -13,7 +13,6 @@ Rails.application.routes.draw do
       resources :responses, only: [:create]
     end
   end
-  
 
   get 'home/index'
   root 'home#index'
@@ -61,7 +60,6 @@ Rails.application.routes.draw do
   post 'seller_login', to: 'sessions#create', as: 'session'
   delete 'seller_logout', to: 'sessions#destroy', as: 'destroy_session'
   get 'sellers/:id/statistics', to: 'sellers#statistics', as: 'statistics_seller'
-
 
   get "up" => "rails/health#show", as: :rails_health_check
 end
