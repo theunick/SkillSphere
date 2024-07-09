@@ -1,0 +1,12 @@
+<h1>Modifica Bio</h1>
+
+<%= form_for @account do |f| %>
+  <div class="field">
+    <%= f.label :bio %><br>
+    <%= f.text_area :bio %>
+  </div>
+  
+  <div class="actions">
+    <%= f.submit 'Aggiorna Bio' %>
+  </div>
+<% end %>
