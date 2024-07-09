@@ -1,6 +1,14 @@
 <% if @account %>
   <h1>Personal Account</h1>
 
+  <div class="account-profile">
+    <% if @account.image.present? %>
+      <%= image_tag(@account.image, alt: "Profile Image", class: "profile-image") %>
+    <% else %>
+      <%= image_tag("default_profile_image.png", alt: "Default Profile Image", class: "profile-image") %>
+    <% end %>
+  </div>
+
   <p>Nome: <%= @account.name %></p>
   <p>Email: <%= @account.email %></p>
   <p>Ruolo: <%= @account.role %></p>
