@@ -30,4 +30,8 @@ class Account < ApplicationRecord
     Cart.create(account: self)
   end
 
+  def total_spent
+    self.purchases.joins(:course).sum('courses.price')
+  end
+
 end
