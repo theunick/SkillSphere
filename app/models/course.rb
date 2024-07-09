@@ -5,7 +5,7 @@ class Course < ApplicationRecord
   has_many :reviews, dependent: :destroy
   has_many :reports, dependent: :destroy
   has_many :purchases, dependent: :destroy
-  has_many :buyers, through: :purchases, source: :user  # Correzione: utilizzare `user` come source
+  has_many :buyers, through: :purchases, source: :account
   has_many :cart_items
 
   validates :title, :description, :category, presence: true
