@@ -30,8 +30,14 @@ Rails.application.routes.draw do
       post 'add_course'
       delete 'remove_course'
       post 'purchase'
+      post 'checkout', to: 'payments#create'
     end
   end
+
+  get 'payments/execute', to: 'payments#execute', as: 'execute_payment'
+  post 'checkout/create', to: 'payments#create', as: 'checkout_create'
+  get 'checkout/success', to: 'payments#success', as: 'checkout_success'
+  get 'checkout/cancel', to: 'payments#cancel', as: 'checkout_cancel'
 
   resources :reports, only: [:create, :destroy]
   get 'reported_courses', to: 'reports#index', as: 'reported_courses'

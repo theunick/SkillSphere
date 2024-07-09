@@ -74,6 +74,9 @@ gem 'turbolinks', '~> 5'
 
 gem 'hotwire-rails'
 
+gem 'stripe'
+
+
 
 
 

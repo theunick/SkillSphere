@@ -38,26 +38,17 @@
 <% end %>
 
 <% if current_user %>
-  <% if current_user.cart %>
+  <% unless current_user.bought_courses.include?(@course) %>
     <% if current_user.cart.courses.include?(@course) %>
-      <p>Già nel carrello</p>
+      <p>Il corso è già nel carrello.</p>
     <% else %>
       <%= button_to 'Aggiungi al carrello', add_course_cart_path(current_user.cart.id, course_id: @course.id), method: :post, class: 'btn btn-primary' %>
     <% end %>
-  <% else %>
-    <p>Errore: nessun carrello trovato per l'utente corrente.</p>
-  <% end %>
-  <% unless current_user.bought_courses.include?(@course) %>
     <%= button_to 'Compra', purchase_course_path(@course), method: :post, class: 'btn btn-primary' %>
   <% end %>
 <% else %>
-  <p>Devi essere loggato per aggiungere il corso al carrello.</p>
+  <p>Devi essere loggato per aggiungere il corso al carrello o acquistarlo.</p>
 <% end %>
-
-
-
-
-
 
 <%= link_to 'Modifica', edit_course_path(@course), class: 'btn btn-secondary' if current_seller == @course.seller %>
 <%= link_to 'Indietro', courses_path, class: 'btn btn-secondary' %>
