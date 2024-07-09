@@ -4,6 +4,7 @@ RSpec.describe 'Add a new course', type: :system do
   before do
     driven_by(:selenium_chrome_headless)
 
+    # Fake account
     @seller = Account.create!(
       provider: 'google_oauth2',
       uid: '123545',
@@ -15,7 +16,9 @@ RSpec.describe 'Add a new course', type: :system do
     puts "Account creation errors: #{@seller.errors.full_messages.join(', ')}"
     raise "Account not created" unless @seller.persisted?
 
-    # Usa il middleware di rack_session_access per settare la sessione
+    # Utilizzo il middleware rack_session_access per impostare
+    # la sessione del test in modo che sembri che l'utente specificato sia loggato.
+    # Bypasso l'autenticazione reale e simulo l'accesso di un utente.
     page.set_rack_session(user_id: @seller.uid)
   end
 
