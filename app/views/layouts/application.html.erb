@@ -13,6 +13,7 @@
 </head>
 
 <body>
+<h1>SkillSphere</h1>
   <nav>
     <%= link_to 'Home', root_path, class: 'navbar-home-button' %>
     <% if session[:user_id] %>
@@ -23,6 +24,12 @@
     <% end %>
     <% if current_user && current_user.cart %>
         <%= link_to 'Carrello', cart_path(current_user.cart) %>
+    <% end %>
+    <%= link_to 'Catalogo', courses_path %>
+    <% if !session[:user_id] %>
+      <%= link_to "Sign in with Google", '/auth/google_oauth2', method: :post %>
+    <% else %>
+      <%= link_to "Log out", '/session/destroy', method: :get %>
     <% end %>
   </nav>
   <%= yield %>
