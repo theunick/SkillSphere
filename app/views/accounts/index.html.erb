@@ -45,6 +45,9 @@
       <p class="alert"><%= flash[:alert] %></p>
     <% end %>
 
+    <h2>Totale Speso</h2>
+    <p><strong>Totale soldi spesi per i corsi:</strong> <%= number_to_currency(@account.total_spent) %></p>
+
     <h2>Risposte alle Richieste di Assistenza</h2>
     <% if @account.assistance_requests.any? %>
       <ul>

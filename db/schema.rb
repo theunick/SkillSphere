@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_07_08_104432) do
+ActiveRecord::Schema.define(version: 2024_07_09_134451) do
 
   create_table "accounts", force: :cascade do |t|
     t.string "uid"
@@ -39,10 +39,10 @@ ActiveRecord::Schema.define(version: 2024_07_08_104432) do
 
   create_table "assistances", force: :cascade do |t|
     t.text "message"
-    t.integer "account_id", null: false
+    t.integer "user_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["account_id"], name: "index_assistances_on_account_id"
+    t.index ["user_id"], name: "index_assistances_on_user_id"
   end
 
   create_table "cart_items", force: :cascade do |t|
@@ -72,7 +72,6 @@ ActiveRecord::Schema.define(version: 2024_07_08_104432) do
     t.json "google_drive_file_ids"
     t.decimal "price"
     t.boolean "hidden", default: false
-    t.string "name"
     t.index ["seller_id"], name: "index_courses_on_seller_id"
   end
 
@@ -123,6 +122,16 @@ ActiveRecord::Schema.define(version: 2024_07_08_104432) do
     t.index ["course_id"], name: "index_reports_on_course_id"
   end
 
+  create_table "responses", force: :cascade do |t|
+    t.text "content"
+    t.integer "review_id", null: false
+    t.integer "account_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["account_id"], name: "index_responses_on_account_id"
+    t.index ["review_id"], name: "index_responses_on_review_id"
+  end
+
   create_table "reviews", force: :cascade do |t|
     t.integer "course_id", null: false
     t.text "content"
@@ -133,7 +142,7 @@ ActiveRecord::Schema.define(version: 2024_07_08_104432) do
     t.index ["course_id"], name: "index_reviews_on_course_id"
   end
 
-  add_foreign_key "assistances", "accounts"
+  add_foreign_key "assistances", "users"
   add_foreign_key "cart_items", "carts"
   add_foreign_key "cart_items", "courses"
   add_foreign_key "carts", "accounts"
@@ -142,5 +151,7 @@ ActiveRecord::Schema.define(version: 2024_07_08_104432) do
   add_foreign_key "purchases", "courses"
   add_foreign_key "reports", "accounts"
   add_foreign_key "reports", "courses"
+  add_foreign_key "responses", "accounts"
+  add_foreign_key "responses", "reviews"
   add_foreign_key "reviews", "courses"
 end
