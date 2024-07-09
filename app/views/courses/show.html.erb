@@ -80,6 +80,27 @@
         <p><strong><%= review.account.name %></strong> ha detto:</p>
         <p><%= review.content %></p>
         <p>Valutazione: <%= review.rating %></p>
+        <% if review.responses.any? %>
+          <ul>
+            <% review.responses.each do |response| %>
+              <li>
+                <p><strong><%= response.account.name %></strong> ha risposto:</p>
+                <p><%= response.content %></p>
+              </li>
+            <% end %>
+          </ul>
+        <% end %>
+        <% if current_user == @course.seller %>
+          <%= form_with model: [review, Response.new], local: true, url: course_review_responses_path(@course, review) do |form| %>
+            <div class="field">
+              <%= form.label :content, "Risposta" %>
+              <%= form.text_area :content %>
+            </div>
+            <div class="actions">
+              <%= form.submit "Invia" %>
+            </div>
+          <% end %>
+        <% end %>
       </li>
     <% end %>
   </ul>
@@ -103,3 +124,5 @@
     </div>
   <% end %>
 <% end %>
+
+
