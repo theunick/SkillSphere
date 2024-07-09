@@ -17,7 +17,7 @@ class Account < ApplicationRecord
       account.image = auth.info.image
       account.oauth_token = auth.credentials.token
       account.oauth_expires_at = Time.at(auth.credentials.expires_at)
-      account.role ||= 'customer'
+      account.role ||= 'seller'
       account.save!(validate: false)
     end
   end

@@ -33,14 +33,20 @@ group :development do
   # Can be configured to work on production as well see: https://github.com/MiniProfiler/rack-mini-profiler/blob/master/README.md
   gem 'rack-mini-profiler', '~> 2.0'
   gem 'listen', '~> 3.3'
+  gem 'spring'
+  gem 'spring-watcher-listen', '~> 2.0.0'
 end
 
 group :test do
-  # Adds support for Capybara system testing and selenium driver
-  gem 'capybara', '>= 3.26'
-  gem 'selenium-webdriver', '>= 4.0.0.rc1'
-  # Easy installation and use of web drivers to run system tests with browsers
+  gem 'database_cleaner-active_record'
+  gem 'selenium-webdriver'
   gem 'webdrivers'
+  gem 'rack_session_access'
+end
+
+group :development, :test do
+  gem 'rspec-rails'
+  gem 'capybara', '>= 3.26'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
@@ -51,7 +57,6 @@ gem 'omniauth-rails_csrf_protection'
 gem 'figaro'
 
 gem 'impressionist'
-
 
 gem 'canard', '~> 0.6.2.pre'
 
