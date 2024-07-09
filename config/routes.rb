@@ -17,7 +17,7 @@ Rails.application.routes.draw do
   root 'home#index'
   resources :courses
   resources :accounts do
-    resources :assistance_requests, only: [:create, :destroy, :index, :update]
+    resources :assistance_requests, only: [:create, :destroy, :index, :update, :edit]
     member do
       patch 'make_customer'
       patch 'make_seller'

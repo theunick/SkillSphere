@@ -10,8 +10,11 @@
   </div>
 
   <p>Nome: <%= @account.name %></p>
+  <p>Bio: <%= @account.bio %></p>
   <p>Email: <%= @account.email %></p>
   <p>Ruolo: <%= @account.role %></p>
+
+  <%= link_to 'Modifica Bio', edit_account_path(@account) %>
 
   <% if @account.role == 'customer' %>
     <%= button_to 'Diventa un Seller', make_seller_account_path(@account), method: :patch %>
