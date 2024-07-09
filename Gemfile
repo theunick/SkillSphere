@@ -75,3 +75,5 @@ gem 'turbolinks', '~> 5'
 gem 'hotwire-rails'
 
 gem 'net-protocol', require: false
+
+gem 'stripe'
