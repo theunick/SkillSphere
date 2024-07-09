@@ -1,6 +1,8 @@
-# app/models/user.rb
 class User < ApplicationRecord
-
+  has_one :cart, dependent: :destroy
+  has_many :purchases, dependent: :destroy
+  has_many :bought_courses, through: :purchases, source: :course  # Associazione per i corsi acquistati
+  
   has_many :courses, foreign_key: :seller_id
 
   devise :database_authenticatable, :registerable,
@@ -20,5 +22,4 @@ class User < ApplicationRecord
     # Definisci la logica per determinare se l'utente è un venditore
     self.role == 'seller'
   end
-
 end
