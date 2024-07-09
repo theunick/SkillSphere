@@ -1,18 +1,17 @@
-<h1>Il tuo Carrello</h1>
+<h1>Il tuo carrello</h1>
 
-<% if @cart.courses.any? %>
+<% if @cart.cart_items.any? %>
   <ul>
-    <% @cart.courses.each do |course| %>
+    <% @cart.cart_items.each do |item| %>
       <li>
-        <%= link_to course.title, course_path(course) %>
-        <p><%= course.description %></p>
-        <%= button_to 'Rimuovi dal Carrello', remove_course_cart_path(course_id: course.id), method: :delete %>
+        <%= item.course.title %> - <%= number_to_currency(item.course.price) %>
+        <%= link_to 'Rimuovi', remove_course_cart_path(@cart, course_id: item.course.id), method: :delete %>
       </li>
     <% end %>
   </ul>
-  <%= button_to 'Acquista', purchase_cart_path, method: :post, class: 'btn btn-primary' %>
+  <h2>Totale: <%= number_to_currency(@cart.cart_items.sum { |item| item.course.price }) %></h2>
+  <%= button_to 'Compra Tutti', purchase_cart_path, method: :post, class: 'btn btn-primary' %>
+  <%= button_to 'Checkout con Stripe', checkout_cart_path(@cart), method: :post, class: 'btn btn-primary' %>
 <% else %>
   <p>Il tuo carrello è vuoto.</p>
 <% end %>
-
-<%= link_to 'Indietro', courses_path, class: 'btn btn-secondary' %>

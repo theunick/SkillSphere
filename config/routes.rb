@@ -1,24 +1,21 @@
 Rails.application.routes.draw do
   get 'sellers/statistics'
-  
   resources :courses do
     member do
       post 'upload_file'
       get 'share_drive'
       post 'add_to_cart'
+      post 'purchase'
       get 'statistics'
       get 'show_customer'
-      get 'payment', to: 'payments#new'   # Aggiungi questa riga per mostrare il modulo di pagamento
-      post 'pay', to: 'payments#create'   # Aggiungi questa riga per gestire il pagamento
     end
     resources :reviews, only: [:create]
   end
-
-  resources :purchases, only: [:create]
+  
 
   get 'home/index'
   root 'home#index'
-  
+  resources :courses
   resources :accounts do
     resources :assistance_requests, only: [:create, :destroy, :index, :update]
     member do
@@ -28,11 +25,19 @@ Rails.application.routes.draw do
     end
   end
 
-  resource :cart, only: [:show] do
-    post 'add_course', to: 'carts#add_course'
-    delete 'remove_course', to: 'carts#remove_course'
-    post 'purchase', to: 'carts#purchase'
+  resources :carts, only: [:show] do
+    member do
+      post 'add_course'
+      delete 'remove_course'
+      post 'purchase'
+      post 'checkout', to: 'payments#create'
+    end
   end
+
+  get 'payments/execute', to: 'payments#execute', as: 'execute_payment'
+  post 'checkout/create', to: 'payments#create', as: 'checkout_create'
+  get 'checkout/success', to: 'payments#success', as: 'checkout_success'
+  get 'checkout/cancel', to: 'payments#cancel', as: 'checkout_cancel'
 
   resources :reports, only: [:create, :destroy]
   get 'reported_courses', to: 'reports#index', as: 'reported_courses'
@@ -54,6 +59,7 @@ Rails.application.routes.draw do
   post 'seller_login', to: 'sessions#create', as: 'session'
   delete 'seller_logout', to: 'sessions#destroy', as: 'destroy_session'
   get 'sellers/:id/statistics', to: 'sellers#statistics', as: 'statistics_seller'
+
 
   get "up" => "rails/health#show", as: :rails_health_check
 end
