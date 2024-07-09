@@ -32,25 +32,5 @@
   </div>
 
   <%= embed_youtube_video('JFO_HLa0UMc') %>
-
-  <% if current_user %>
-    <h2>Il tuo Carrello</h2>
-    <% if @cart && @cart.cart_items.any? %>
-      <ul>
-        <% @cart.cart_items.each do |item| %>
-          <li>
-            <%= item.course.name %> - <%= item.course.price %> €
-            <%= button_to 'Rimuovi', remove_course_cart_path(course_id: item.course.id), method: :delete %>
-          </li>
-        <% end %>
-      </ul>
-      <%= button_to 'Acquista', purchase_cart_path, method: :post %>
-    <% else %>
-      <p>Il tuo carrello è vuoto.</p>
-    <% end %>
-  <% else %>
-    <p>Accedi per vedere il tuo carrello.</p>
-  <% end %>
-
 </body>
 </html>
