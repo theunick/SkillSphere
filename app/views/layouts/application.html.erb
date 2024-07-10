@@ -9,9 +9,11 @@
   <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
   <%= javascript_include_tag 'application' %>
   <%= javascript_include_tag 'google_picker' %>
+  <script src="https://js.stripe.com/v3/"></script>
 </head>
 
 <body>
+<h1>SkillSphere</h1>
   <nav>
     <%= link_to 'Home', root_path, class: 'navbar-home-button' %>
     <% if session[:user_id] %>
@@ -23,7 +25,21 @@
     <% if current_user && current_user.cart %>
         <%= link_to 'Carrello', cart_path(current_user.cart) %>
     <% end %>
+    <%= link_to 'Catalogo', courses_path %>
+    <% if !session[:user_id] %>
+      <%= link_to "Sign in with Google", '/auth/google_oauth2', method: :post, id: "google_sign_in_link" %>
+    <% else %>
+      <%= link_to "Log out", '/session/destroy', method: :get %>
+    <% end %>
   </nav>
+
+  <% if flash[:notice] %>
+    <div class="notice"><%= flash[:notice] %></div>
+  <% end %>
+  <% if flash[:alert] %>
+    <div class="alert"><%= flash[:alert] %></div>
+  <% end %>
+  
   <%= yield %>
   <div id="result"></div>
   <script>
@@ -32,5 +48,6 @@
   </script>
   <script async defer src="https://apis.google.com/js/api.js" onload="onApiLoad()"></script>
   <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
+  
 </body>
 </html>

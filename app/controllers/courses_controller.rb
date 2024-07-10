@@ -1,8 +1,7 @@
 class CoursesController < ApplicationController
-
   impressionist actions: [:show, :show_customer]
-  
-  before_action :set_course, only: %i[ show edit update destroy ]
+
+  before_action :set_course, only: %i[show edit update destroy]
 
   def index
     @courses = Course.all
@@ -24,7 +23,6 @@ class CoursesController < ApplicationController
     end
   end
 
-  # GET /courses/1 or /courses/1.json
   def show
     if @course.hidden?
       redirect_to courses_path, alert: 'Questo corso non è disponibile.'
@@ -32,27 +30,26 @@ class CoursesController < ApplicationController
     @report = Report.new
   end
 
-  # GET /courses/new
   def new
     @course = Course.new
   end
 
-  # GET /courses/1/edit
   def edit
   end
 
-  # POST /courses or /courses.json
   def create
     @course = Course.new(course_params)
     @course.seller = current_seller
     if @course.save
       redirect_to @course, notice: 'Course was successfully created.'
     else
+      Rails.logger.error "Course creation failed: #{@course.errors.full_messages.join(", ")}"
+      Rails.logger.error "Course attributes: #{@course.attributes.inspect}"
+      Rails.logger.error "Params: #{course_params.inspect}"
       render :new
     end
   end
 
-  # PATCH/PUT /courses/1 or /courses/1.json
   def update
     if @course.update(course_params)
       redirect_to @course, notice: 'Course was successfully updated.'
@@ -61,13 +58,11 @@ class CoursesController < ApplicationController
     end
   end
 
-  # DELETE /courses/1 or /courses/1.json
   def destroy
     @course.update(hidden: true)
     redirect_to courses_url, notice: 'Course was successfully destroyed.'
   end
 
-    # GET /courses/uploaded
   def uploaded
     @courses = current_seller.courses
   end
@@ -89,16 +84,12 @@ class CoursesController < ApplicationController
 
   private
 
-  # Use callbacks to share common setup or constraints between actions.
   def set_course
     @course = Course.find(params[:id])
     impressionist(@course)
   end
 
-  
-
-  # Only allow a list of trusted parameters through.
   def course_params
-    params.require(:course).permit(:title, :code, :category, :description, :google_drive_file_ids, :price)
+    params.require(:course).permit(:title, :category, :description, :google_drive_file_ids, :price)
   end
 end

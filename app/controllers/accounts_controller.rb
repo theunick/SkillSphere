@@ -16,6 +16,16 @@ class AccountsController < ApplicationController
   end
 
   def edit
+    @account = Account.find(params[:id])
+  end
+
+  def update
+    @account = Account.find(params[:id])
+    if @account.update(account_params)
+      redirect_to @account, notice: 'Bio aggiornata con successo.'
+    else
+      render :edit
+    end
   end
 
   def create
@@ -113,7 +123,9 @@ class AccountsController < ApplicationController
     end
   end  
 
+  private
+
   def account_params
-    params.require(:account).permit(:email, :name, :surname, :role)
+    params.require(:account).permit(:name, :email, :bio, :password, :password_confirmation)
   end
 end

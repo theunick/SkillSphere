@@ -1,13 +1,19 @@
 class SessionsController < ApplicationController
   skip_before_action :verify_authenticity_token, only: :google_auth
 
+  def new
+    # Questa azione serve solo a visualizzare la pagina di login
+  end
+
   def google_auth
+    Rails.logger.debug "Entrato in google_auth"
     user_info = request.env['omniauth.auth']
     Rails.logger.debug "OmniAuth auth hash: #{user_info.inspect}"
 
     account = Account.from_omniauth(user_info)
     if account.persisted?
       session[:user_id] = account.uid
+      Rails.logger.debug "Login riuscito: #{account.inspect}"
       redirect_to root_path, notice: 'Logged in successfully'
     else
       Rails.logger.error "Failed to persist account: #{account.errors.full_messages.join(', ')}"

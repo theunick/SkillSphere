@@ -6,9 +6,10 @@ class Account < ApplicationRecord
   has_many :reports, dependent: :destroy
   has_many :reviews, dependent: :destroy
   has_many :purchases, dependent: :destroy
-  has_many :bought_courses, through: :purchases, source: :course
+  has_many :bought_courses, through: :purchases, source: :course, dependent: :destroy
   has_one :cart, dependent: :destroy
   after_create :create_cart
+  after_initialize :set_default_bio, if: :new_record?
 
   def self.from_omniauth(auth)
     where(uid: auth.uid, provider: auth.provider).first_or_initialize.tap do |account|
@@ -28,6 +29,16 @@ class Account < ApplicationRecord
 
   def create_cart
     Cart.create(account: self)
+  end
+
+  def total_spent
+    self.purchases.joins(:course).sum('courses.price')
+  end
+
+  private
+
+  def set_default_bio
+    self.bio ||= 'Adoro SkillSphere'
   end
 
 end

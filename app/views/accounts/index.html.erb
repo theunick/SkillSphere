@@ -1,9 +1,20 @@
 <% if @account %>
   <h1>Personal Account</h1>
 
+  <div class="account-profile">
+    <% if @account.image.present? %>
+      <%= image_tag(@account.image, alt: "Profile Image", class: "profile-image") %>
+    <% else %>
+      <%= image_tag("default_profile_image.png", alt: "Default Profile Image", class: "profile-image") %>
+    <% end %>
+  </div>
+
   <p>Nome: <%= @account.name %></p>
+  <p>Bio: <%= @account.bio %></p>
   <p>Email: <%= @account.email %></p>
   <p>Ruolo: <%= @account.role %></p>
+
+  <%= link_to 'Modifica Bio', edit_account_path(@account) %>
 
   <% if @account.role == 'customer' %>
     <%= button_to 'Diventa un Seller', make_seller_account_path(@account), method: :patch %>
@@ -44,6 +55,9 @@
     <% elsif flash[:alert] %>
       <p class="alert"><%= flash[:alert] %></p>
     <% end %>
+
+    <h2>Totale Speso</h2>
+    <p><strong>Totale soldi spesi per i corsi:</strong> <%= number_to_currency(@account.total_spent) %></p>
 
     <h2>Risposte alle Richieste di Assistenza</h2>
     <% if @account.assistance_requests.any? %>

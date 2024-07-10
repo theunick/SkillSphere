@@ -5,10 +5,10 @@ class Course < ApplicationRecord
   has_many :reviews, dependent: :destroy
   has_many :reports, dependent: :destroy
   has_many :purchases, dependent: :destroy
-  has_many :buyers, through: :purchases, source: :user  # Correzione: utilizzare `user` come source
-  has_many :cart_items
+  has_many :buyers, through: :purchases, source: :account
+  has_many :cart_items, dependent: :destroy
 
-  validates :title, :description, :code, :category, presence: true
+  validates :title, :description, :category, presence: true
   validates :price, presence: true, numericality: { greater_than_or_equal_to: 0 }
 
   scope :visible, -> { where(hidden: false) }

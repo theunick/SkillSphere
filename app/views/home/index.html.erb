@@ -1,56 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <nav>
-    <% if !session[:user_id] %>
-      <%= button_to "Sign in with Google", '/auth/google_oauth2', method: :post %>
-    <% else %>
-      <%= button_to "Log out", '/session/destroy', method: :get %>
-    <% end %>
-  </nav>
   <title>SkillSphere</title>
 </head>
 <body>
-  <h1>SkillSphere</h1>
-  <nav>
-    <ul>
-      <li><%= link_to 'Course', courses_path %></li>
-    </ul>
-  </nav>
-
-  <div class="adsense-banner">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8567637923927490"
-      crossorigin="anonymous"></script>
-    <!-- banner principale -->
-    <ins class="adsbygoogle"
-      style="display:inline-block;width:480px;height:90px"
-      data-ad-client="ca-pub-8567637923927490"
-      data-ad-slot="4276157203"></ins>
-    <script>
-      (adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
-  </div>
-
   <%= embed_youtube_video('JFO_HLa0UMc') %>
-
-  <% if current_user %>
-    <h2>Il tuo Carrello</h2>
-    <% if @cart && @cart.cart_items.any? %>
-      <ul>
-        <% @cart.cart_items.each do |item| %>
-          <li>
-            <%= item.course.name %> - <%= item.course.price %> €
-            <%= button_to 'Rimuovi', remove_course_cart_path(course_id: item.course.id), method: :delete %>
-          </li>
-        <% end %>
-      </ul>
-      <%= button_to 'Acquista', purchase_cart_path, method: :post %>
-    <% else %>
-      <p>Il tuo carrello è vuoto.</p>
-    <% end %>
-  <% else %>
-    <p>Accedi per vedere il tuo carrello.</p>
-  <% end %>
-
 </body>
 </html>
