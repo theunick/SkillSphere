@@ -6,7 +6,7 @@ class Account < ApplicationRecord
   has_many :reports, dependent: :destroy
   has_many :reviews, dependent: :destroy
   has_many :purchases, dependent: :destroy
-  has_many :bought_courses, through: :purchases, source: :course
+  has_many :bought_courses, through: :purchases, source: :course, dependent: :destroy
   has_one :cart, dependent: :destroy
   after_create :create_cart
   after_initialize :set_default_bio, if: :new_record?
