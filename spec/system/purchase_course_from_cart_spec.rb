@@ -53,7 +53,7 @@ RSpec.describe 'Purchase a course from the cart', type: :system do
 
     # Verifica che siamo reindirizzati alla pagina di Stripe
     expect(page).to have_content('Email')
-    expect(page).to have_content('Card information')
-    expect(page).to have_content('Pay')
+    expect(page).to have_content('Dati della carta')
+    expect(page).to have_content('Paga')
   end
 end
