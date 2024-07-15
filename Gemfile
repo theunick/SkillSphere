@@ -42,6 +42,7 @@ group :test do
   gem 'selenium-webdriver'
   gem 'webdrivers'
   gem 'rack_session_access'
+  gem 'shoulda-matchers', '~> 5.0'
 end
 
 group :development, :test do
