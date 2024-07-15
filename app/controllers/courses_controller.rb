@@ -80,6 +80,7 @@ class CoursesController < ApplicationController
 
   def show_customer
     @course = Course.find(params[:id])
+    @report = Report.new
   end
 
   private

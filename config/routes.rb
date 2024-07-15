@@ -39,7 +39,7 @@ Rails.application.routes.draw do
   get 'checkout/success', to: 'payments#success', as: 'checkout_success'
   get 'checkout/cancel', to: 'payments#cancel', as: 'checkout_cancel'
 
-  resources :reports, only: [:create, :destroy]
+  resources :reports, only: [:new, :create, :destroy]
   get 'reported_courses', to: 'reports#index', as: 'reported_courses'
   get 'assistance_requests', to: 'assistance_requests#index', as: 'all_assistances'
 

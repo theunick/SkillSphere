@@ -6,6 +6,11 @@ class ReportsController < ApplicationController
     @reports = Report.includes(:course).all
   end
 
+  def new
+    @report = Report.new
+    @course = Course.find(params[:course_id])
+  end
+
   def create
     @report = Report.new(report_params)
     @report.account = current_user

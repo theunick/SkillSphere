@@ -91,8 +91,6 @@ function pickerCallback(data) {
       fileElement.innerHTML = `
         <p><strong>File Name:</strong> ${fileName}</p>
         <p><strong>File URL:</strong> <a href="${fileUrl}" target="_blank">${fileUrl}</a></p>
-        <button onclick="fetchFileDetails('${fileId}')">Get File Details</button>
-        <div id="file-details-${fileId}"></div>
       `;
 
       resultContainer.appendChild(fileElement);

@@ -18,7 +18,7 @@
   <%= @course.price %>
 </p>
 
-<% if current_user && current_user.bought_courses.include?(@course) %>
+<% if current_user && (current_user.bought_courses.include?(@course) || current_seller == @course.seller)%>
   <p>
     <strong>Google Drive Files:</strong>
     <ul>
@@ -44,13 +44,15 @@
     <% else %>
       <%= button_to 'Aggiungi al carrello', add_course_cart_path(current_user.cart.id, course_id: @course.id), method: :post, class: 'btn btn-primary' %>
     <% end %>
-    <%= button_to 'Compra', purchase_course_path(@course), method: :post, class: 'btn btn-primary' %>
   <% end %>
 <% else %>
   <p>Devi essere loggato per aggiungere il corso al carrello o acquistarlo.</p>
 <% end %>
 
 <%= link_to 'Modifica', edit_course_path(@course), class: 'btn btn-secondary' if current_seller == @course.seller %>
+<% if ((current_user && current_user.admin?) || (current_seller == @course.seller)) %>
+  <%= button_to 'Elimina', course_path(@course), method: :delete, data: { confirm: 'Sei sicuro di voler eliminare questo corso?' }, class: 'btn btn-danger' %>
+<% end %>
 <%= link_to 'Indietro', courses_path, class: 'btn btn-secondary' %>
 
 <h2>Segnala il corso</h2>
