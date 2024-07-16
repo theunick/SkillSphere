@@ -1,16 +1,148 @@
-<h1>Il tuo carrello</h1>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>SkillSphere - Il tuo carrello</title>
+  <style>
+    /* General styles */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f8f8;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
-<% if @cart.cart_items.any? %>
-  <ul>
-    <% @cart.cart_items.each do |item| %>
-      <li>
-        <%= item.course.title %> - <%= number_to_currency(item.course.price) %>
-        <%= link_to 'Rimuovi', remove_course_cart_path(@cart, course_id: item.course.id), method: :delete %>
-      </li>
-    <% end %>
-  </ul>
-  <h2>Totale: <%= number_to_currency(@cart.cart_items.sum { |item| item.course.price }) %></h2>
-  <%= button_to 'Checkout con Stripe', checkout_cart_path(@cart), method: :post, class: 'btn btn-primary' %>
-<% else %>
-  <p>Il tuo carrello è vuoto.</p>
-<% end %>
+    header {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 0;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2.5em;
+    }
+
+    nav {
+      margin-top: 10px;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: white;
+      margin: 0 15px;
+      padding: 5px 10px;
+      border: 2px solid white;
+      border-radius: 5px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    nav a:hover {
+      background-color: white;
+      color: #4CAF50;
+    }
+
+    main {
+      max-width: 800px;
+      margin: 20px;
+      padding: 20px;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    h1, h2 {
+      color: #4CAF50;
+      margin-bottom: 20px;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    li {
+      background-color: #f9f9f9;
+      margin: 10px 0;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    li span {
+      display: inline-block;
+      margin-right: 10px;
+    }
+
+    .btn-primary {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s, color 0.3s;
+      font-size: 1em;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary:hover {
+      background-color: #45a049;
+    }
+
+    .btn-danger {
+      background-color: red;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s, color 0.3s;
+      font-size: 0.9em;
+      text-decoration: none;
+    }
+
+    .btn-danger:hover {
+      background-color: darkred;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>SkillSphere</h1>
+    <nav>
+      <a href="<%= new_session_path %>">Login</a>
+      <a href="<%= cart_path(current_user.cart) %>">Cart</a>
+    </nav>
+  </header>
+  <main>
+    <h1>Il tuo carrello</h1>
+
+    <% if @cart.cart_items.any? %>
+      <ul>
+        <% @cart.cart_items.each do |item| %>
+          <li>
+            <span><%= item.course.title %></span> - <span><%= number_to_currency(item.course.price) %></span>
+            <%= link_to 'Rimuovi', remove_course_cart_path(@cart, course_id: item.course.id), method: :delete, class: 'btn-danger' %>
+          </li>
+        <% end %>
+      </ul>
+      <h2>Totale: <%= number_to_currency(@cart.cart_items.sum { |item| item.course.price }) %></h2>
+      <%= button_to 'Checkout con Stripe', checkout_cart_path(@cart), method: :post, class: 'btn-primary' %>
+    <% else %>
+      <p>Il tuo carrello è vuoto.</p>
+    <% end %> 
+  </main>
+</body>
+</html>

@@ -1,28 +1,147 @@
-<h1>Richieste assistenza</h1>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>SkillSphere - Richieste Assistenza</title>
+  <style>
+    /* General styles */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f8f8;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
-<table>
-  <thead>
-    <tr>
-      <th>Account</th>
-      <th>Descrizione</th>
-      <th>Argomento</th>
-      <th>Data di creazione</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% if @assistance_requests.present? %>
-      <% @assistance_requests.each do |request| %>
+    header {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 0;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2.5em;
+    }
+
+    nav {
+      margin-top: 10px;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: white;
+      margin: 0 15px;
+      padding: 5px 10px;
+      border: 2px solid white;
+      border-radius: 5px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    nav a:hover {
+      background-color: white;
+      color: #4CAF50;
+    }
+
+    main {
+      max-width: 1000px;
+      margin: 20px;
+      padding: 20px;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      color: #4CAF50;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    table th, table td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    table th {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    table tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    table tr:hover {
+      background-color: #ddd;
+    }
+
+    .btn-primary {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s, color 0.3s;
+      font-size: 1em;
+      text-decoration: none;
+    }
+
+    .btn-primary:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>SkillSphere</h1>
+    <nav>
+      <a href="<%= new_session_path %>">Login</a>
+      <a href="<%= cart_path(current_user.cart) %>">Cart</a>
+    </nav>
+  </header>
+  <main>
+    <h1>Richieste Assistenza</h1>
+
+    <table>
+      <thead>
         <tr>
-          <td><%= request.user.email %></td>
-          <td><%= request.description %></td>
-          <td><%= request.status %></td>
-          <td><%= request.created_at.strftime("%Y-%m-%d %H:%M") %></td>
+          <th>Account</th>
+          <th>Descrizione</th>
+          <th>Argomento</th>
+          <th>Data di creazione</th>
         </tr>
-      <% end %>
-    <% else %>
-      <tr>
-        <td colspan="2">Nessuna richiesta trovata.</td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+      </thead>
+      <tbody>
+        <% if @assistance_requests.present? %>
+          <% @assistance_requests.each do |request| %>
+            <tr>
+              <td><%= request.user.email %></td>
+              <td><%= request.description %></td>
+              <td><%= request.status %></td>
+              <td><%= request.created_at.strftime("%Y-%m-%d %H:%M") %></td>
+            </tr>
+          <% end %>
+        <% else %>
+          <tr>
+            <td colspan="4">Nessuna richiesta trovata.</td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </main>
+</body>
+</html>
+

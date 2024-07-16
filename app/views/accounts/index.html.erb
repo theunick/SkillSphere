@@ -1,85 +1,207 @@
-<% if @account %>
-  <h1>Personal Account</h1>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>SkillSphere - Account</title>
+  <style>
+    /* General styles */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f8f8;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
-  <div class="account-profile">
-    <% if @account.image.present? %>
-      <%= image_tag(@account.image, alt: "Profile Image", class: "profile-image") %>
-    <% else %>
-      <%= image_tag("default_profile_image.png", alt: "Default Profile Image", class: "profile-image") %>
-    <% end %>
-  </div>
+    header {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 0;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
 
-  <p>Nome: <%= @account.name %></p>
-  <p>Bio: <%= @account.bio %></p>
-  <p>Email: <%= @account.email %></p>
-  <p>Ruolo: <%= @account.role %></p>
+    header h1 {
+      margin: 0;
+      font-size: 2.5em;
+    }
 
-  <%= link_to 'Modifica Bio', edit_account_path(@account) %>
+    nav {
+      margin-top: 10px;
+    }
 
-  <% if @account.role == 'customer' %>
-    <%= button_to 'Diventa un Seller', make_seller_account_path(@account), method: :patch %>
-    <%= button_to 'Elimina Account', account_path(@account), method: :delete, data: { confirm: 'Are you sure?' } %>
-    <%= link_to 'Corsi comprati', bought_courses_path %>
-  <% elsif @account.role == 'seller' %>
-    <%= button_to 'Torna Customer', make_customer_account_path(@account), method: :patch %>
-    <%= button_to 'Elimina Account', account_path(@account), method: :delete, data: { confirm: 'Are you sure?' } %>
-    <%= link_to 'Corsi comprati', bought_courses_path %>
-    <%= link_to 'Corsi caricati', uploaded_courses_path %>
-    <%= link_to 'Statistiche', statistics_seller_path(current_user) %>
-  <% elsif @account.role == 'admin' %>
-    <%= link_to 'Corsi segnalati', reported_courses_path %>
-    <%= link_to 'Richieste assistenza', all_assistances_path %>
-    <%= link_to 'Lista utenti', admins_path %>
-  <% end %>
+    nav a {
+      text-decoration: none;
+      color: white;
+      margin: 0 15px;
+      padding: 5px 10px;
+      border: 2px solid white;
+      border-radius: 5px;
+      transition: background-color 0.3s, color 0.3s;
+    }
 
-  <% if @account.role != 'admin' %>
-    <h2>Nuova Richiesta Assistenza</h2>
-    <%= form_with model: AssistanceRequest.new, url: account_assistance_requests_path(@account), method: :post, local: true do |form| %>
-      <div>
-        <%= form.label :message, "Descrizione" %>
-        <%= form.text_area :message %>
-      </div>
-      
-      <div>
-        <%= form.label :status, "Argomento" %>
-        <%= form.select :status, options_for_select(['Altro', 'Transazioni', 'Corsi', 'Account']) %>
-      </div>
-      
-      <div>
-        <%= form.submit 'Invia' %>
-      </div>
-    <% end %>
+    nav a:hover {
+      background-color: white;
+      color: #4CAF50;
+    }
 
-    <% if flash[:notice] %>
-      <p class="notice"><%= flash[:notice] %></p>
-    <% elsif flash[:alert] %>
-      <p class="alert"><%= flash[:alert] %></p>
-    <% end %>
+    main {
+      max-width: 800px;
+      margin: 20px;
+      padding: 20px;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
 
-    <h2>Totale Speso</h2>
-    <p><strong>Totale soldi spesi per i corsi:</strong> <%= number_to_currency(@account.total_spent) %></p>
+    .account-profile {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 20px;
+    }
 
-    <h2>Risposte alle Richieste di Assistenza</h2>
-    <% if @account.assistance_requests.any? %>
-      <ul>
-        <% @account.assistance_requests.each do |request| %>
-          <li>
-            <p><strong>Messaggio:</strong> <%= request.message %></p>
-            <p><strong>Status:</strong> <%= request.status %></p>
-            <% if request.response.present? %>
-              <p><strong>Risposta:</strong> <%= request.response %></p>
-              <%= link_to 'Elimina Richiesta', account_assistance_request_path(@account, request), method: :delete, data: { confirm: 'Sei sicuro di voler eliminare questa richiesta di assistenza?' }, class: 'btn btn-danger' %>
-            <% else %>
-              <p><em>In attesa di risposta</em></p>
-            <% end %>
-          </li>
+    .profile-image {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      margin-bottom: 10px;
+    }
+
+    .btn-primary, .btn-danger {
+      display: inline-block;
+      padding: 10px 20px;
+      margin: 5px;
+      border-radius: 5px;
+      text-decoration: none;
+      color: white;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .btn-primary {
+      background-color: #4CAF50;
+    }
+
+    .btn-primary:hover {
+      background-color: #45a049;
+    }
+
+    .btn-danger {
+      background-color: red;
+    }
+
+    .btn-danger:hover {
+      background-color: darkred;
+    }
+
+    h1, h2, h4 {
+      color: #4CAF50;
+      text-align: center;
+    }
+
+    p, ul, li {
+      color: #333;
+    }
+
+    .notice {
+      color: green;
+    }
+
+    .alert {
+      color: red;
+    }
+  </style>
+</head>
+<body id="account-page">
+  <header>
+  
+  </header>
+  <main>
+    <% if @account %>
+      <h1>Personal Account</h1>
+
+      <div class="account-profile">
+        <% if @account.image.present? %>
+          <%= image_tag(@account.image, alt: "Profile Image", class: "profile-image") %>
         <% end %>
-      </ul>
+      </div>
+
+      <p>Nome: <%= @account.name %></p>
+      <p>Bio: <%= @account.bio %></p>
+      <p>Email: <%= @account.email %></p>
+      <p>Ruolo: <%= @account.role %></p>
+
+      <%= link_to 'Modifica Bio', edit_account_path(@account), class: 'btn-primary' %>
+
+      <% if @account.role == 'customer' %>
+        <%= button_to 'Diventa un Seller', make_seller_account_path(@account), method: :patch, class: 'btn-primary' %>
+        <%= button_to 'Elimina Account', account_path(@account), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn-danger' %>
+        <%= link_to 'Corsi comprati', bought_courses_path, class: 'btn-primary' %>
+      <% elsif @account.role == 'seller' %>
+        <%= button_to 'Torna Customer', make_customer_account_path(@account), method: :patch, class: 'btn-primary' %>
+        <%= button_to 'Elimina Account', account_path(@account), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn-danger' %>
+        <%= link_to 'Corsi comprati', bought_courses_path, class: 'btn-primary' %>
+        <%= link_to 'Corsi caricati', uploaded_courses_path, class: 'btn-primary' %>
+        <%= link_to 'Statistiche', statistics_seller_path(current_user), class: 'btn-primary' %>
+      <% elsif @account.role == 'admin' %>
+        <%= link_to 'Corsi segnalati', reported_courses_path, class: 'btn-primary' %>
+        <%= link_to 'Richieste assistenza', all_assistances_path, class: 'btn-primary' %>
+        <%= link_to 'Lista utenti', admins_path, class: 'btn-primary' %>
+      <% end %>
+
+      <% if @account.role != 'admin' %>
+        <h2>Nuova Richiesta Assistenza</h2>
+        <%= form_with model: AssistanceRequest.new, url: account_assistance_requests_path(@account), method: :post, local: true do |form| %>
+          <div>
+            <%= form.label :message, "Descrizione" %>
+            <%= form.text_area :message %>
+          </div>
+          
+          <div>
+            <%= form.label :status, "Argomento" %>
+            <%= form.select :status, options_for_select(['Altro', 'Transazioni', 'Corsi', 'Account']) %>
+          </div>
+          
+          <div>
+            <%= form.submit 'Invia', class: 'btn-primary' %>
+          </div>
+        <% end %>
+
+        <% if flash[:notice] %>
+          <p class="notice"><%= flash[:notice] %></p>
+        <% elsif flash[:alert] %>
+          <p class="alert"><%= flash[:alert] %></p>
+        <% end %>
+
+        <h2>Totale Speso</h2>
+        <p><strong>Totale soldi spesi per i corsi:</strong> <%= number_to_currency(@account.total_spent) %></p>
+
+        <h2>Risposte alle Richieste di Assistenza</h2>
+        <% if @account.assistance_requests.any? %>
+          <ul>
+            <% @account.assistance_requests.each do |request| %>
+              <li>
+                <p><strong>Messaggio:</strong> <%= request.message %></p>
+                <p><strong>Status:</strong> <%= request.status %></p>
+                <% if request.response.present? %>
+                  <p><strong>Risposta:</strong> <%= request.response %></p>
+                  <%= link_to 'Elimina Richiesta', account_assistance_request_path(@account, request), method: :delete, data: { confirm: 'Sei sicuro di voler eliminare questa richiesta di assistenza?' }, class: 'btn btn-danger' %>
+                <% else %>
+                  <p><em>In attesa di risposta</em></p>
+                <% end %>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <p>Non ci sono richieste di assistenza.</p>
+        <% end %>
+      <% end %>
     <% else %>
-      <p>Non ci sono richieste di assistenza.</p>
+      <p>L'account non esiste o è stato eliminato.</p>
+      <%= link_to 'Torna alla home', root_path, class: 'btn-primary' %>
     <% end %>
-  <% end %>
-<% else %>
-  <p>L'account non esiste o è stato eliminato.</p>
-  <%= link_to 'Torna alla home', root_path, class: 'btn btn-primary' %>
-<% end %>
+  </main>
+</body>
+</html>
