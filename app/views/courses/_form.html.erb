@@ -55,6 +55,7 @@
       border-radius: 10px;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       text-align: center;
+      align-items: center;
     }
 
     h1 {
@@ -69,7 +70,8 @@
 
     .field {
       margin-bottom: 15px;
-      text-align: left;
+      text-align: center;
+      width: 100%;
     }
 
     .field label {
@@ -79,11 +81,14 @@
     }
 
     .field input, .field textarea, .field select {
-      width: 100%;
+      width: calc(100% - 20px);
       padding: 10px;
+      margin-right: 10px;
       border: 1px solid #ddd;
       border-radius: 5px;
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) inset;
+      align-items: center;
+      text-align: center;
     }
 
     .actions {
@@ -101,6 +106,7 @@
       font-size: 1em;
       text-decoration: none;
       display: inline-block;
+      align-items: center;
     }
 
     .btn-primary:hover {
@@ -117,6 +123,7 @@
       transition: background-color 0.3s, color 0.3s;
       font-size: 1em;
       margin-top: 10px;
+      align-items: center;
     }
 
     #google-picker-btn:hover {

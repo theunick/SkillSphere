@@ -35,8 +35,8 @@ RSpec.describe 'Add a new course', type: :system do
     fill_in 'Category', with: 'My New Category'
     fill_in 'Description', with: 'This is a description of my new course'
     fill_in 'Price', with: '99'
-    expect(page).to have_button('Create Course')
-    click_button 'Create Course'
+    expect(page).to have_button('Crea Corso')
+    click_button 'Crea Corso'
 
     expect(page).to have_content('Course was successfully created.')
     expect(page).to have_content('My New Course')
