@@ -112,10 +112,6 @@
 <body>
   <header>
     <h1>SkillSphere</h1>
-    <nav>
-      <a href="<%= new_session_path %>">Login</a>
-      <a href="<%= cart_path(current_user.cart) %>">Cart</a>
-    </nav>
   </header>
   <main>
     <h1>Corsi Segnalati</h1>
@@ -128,7 +124,7 @@
             <p><strong>Motivo:</strong> <%= report.subject %></p>
             <p><strong>Descrizione:</strong> <%= report.description %></p>
             <p><strong>Segnalato da:</strong> <%= report.account.email %></p>
-            <%= link_to 'Elimina Segnalazione', report_path(report), method: :delete, data: { confirm: 'Sei sicuro di voler eliminare questa segnalazione?' }, class: 'btn-danger' %>
+            <%= link_to 'Approva corso', report_path(report), method: :delete, data: { confirm: 'Sei sicuro di voler approvare il corso?' }, class: 'btn-primary' %>
           </li>
         <% end %>
       </ul>

@@ -73,7 +73,8 @@
     }
 
     .field textarea {
-      width: 100%;
+      width: calc(100% - 20px);
+      margin-right: 10px;
       padding: 10px;
       border: 1px solid #ddd;
       border-radius: 5px;
@@ -111,7 +112,6 @@
 
     <%= form_for @account do |f| %>
       <div class="field">
-        <%= f.label :bio %><br>
         <%= f.text_area :bio %>
       </div>
       
