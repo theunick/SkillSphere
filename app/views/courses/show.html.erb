@@ -145,10 +145,6 @@
 <body>
   <header>
     <h1>SkillSphere</h1>
-    <nav>
-      <a href="<%= new_session_path %>">Login</a>
-      <a href="<%= cart_path(current_user.cart) %>">Cart</a>
-    </nav>
   </header>
   <main>
     <% if current_user && current_user.bought_courses.include?(@course) %>
