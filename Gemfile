@@ -43,6 +43,7 @@ group :test do
   gem 'webdrivers'
   gem 'rack_session_access'
   gem 'shoulda-matchers', '~> 5.0'
+  gem 'rails-controller-testing'
 end
 
 group :development, :test do
