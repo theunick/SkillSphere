@@ -22,7 +22,6 @@ RSpec.describe 'Purchase a course from the cart', type: :system do
       role: 'seller'
     )
 
-    # Assicurati che gli account siano stati creati
     raise "Customer account not created" unless @customer.persisted?
     raise "Seller account not created" unless @seller.persisted?
 
@@ -40,7 +39,6 @@ RSpec.describe 'Purchase a course from the cart', type: :system do
       seller: @seller
     )
 
-    # Aggiungi il corso al carrello del cliente
     CartItem.create!(cart: @customer.cart, course: @course)
 
     visit cart_path(@customer.cart)
@@ -48,10 +46,8 @@ RSpec.describe 'Purchase a course from the cart', type: :system do
     expect(page).to have_content('Il tuo carrello')
     expect(page).to have_content('Test Course')
 
-    # Simula l'azione di acquisto con il testo corretto del pulsante
     click_button('Checkout con Stripe', match: :first)
 
-    # Verifica che siamo reindirizzati alla pagina di Stripe
     expect(page).to have_content('Email')
     expect(page).to have_content('Dati della carta')
     expect(page).to have_content('Paga')

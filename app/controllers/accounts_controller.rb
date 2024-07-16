@@ -22,7 +22,7 @@ class AccountsController < ApplicationController
   def update
     @account = Account.find(params[:id])
     if @account.update(account_params)
-      redirect_to @account, notice: 'Bio aggiornata con successo.'
+      redirect_to root_path, notice: 'Bio aggiornata con successo.'
     else
       render :edit
     end

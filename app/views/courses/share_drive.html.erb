@@ -1,27 +1,142 @@
-<!-- app/views/courses/share_drive.html.erb -->
-<h1>Google Drive Files</h1>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>SkillSphere - Google Drive Files</title>
+  <style>
+    /* General styles */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f8f8;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @files.each do |file| %>
-      <tr>
-        <td><%= file.name %></td>
-        <td><%= file.mime_type %></td>
-        <td>
-          <%= link_to 'View', file.web_view_link, target: '_blank' %>
-          <%= link_to 'Download', file.web_content_link, target: '_blank' %>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+    header {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 0;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
 
-<%= link_to 'Back to Course', course_path(@course) %>
+    header h1 {
+      margin: 0;
+      font-size: 2.5em;
+    }
 
+    nav {
+      margin-top: 10px;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: white;
+      margin: 0 15px;
+      padding: 5px 10px;
+      border: 2px solid white;
+      border-radius: 5px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    nav a:hover {
+      background-color: white;
+      color: #4CAF50;
+    }
+
+    main {
+      max-width: 1000px;
+      margin: 20px;
+      padding: 20px;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    h1 {
+      color: #4CAF50;
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    table th, table td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    table th {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    table tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    table tr:hover {
+      background-color: #ddd;
+    }
+
+    .btn-primary {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s, color 0.3s;
+      font-size: 1em;
+      text-decoration: none;
+      display: inline-block;
+      margin: 5px;
+    }
+
+    .btn-primary:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>SkillSphere</h1>
+  
+  </header>
+  <main>
+    <h1>Google Drive Files</h1>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @files.each do |file| %>
+          <tr>
+            <td><%= file.name %></td>
+            <td><%= file.mime_type %></td>
+            <td>
+              <%= link_to 'View', file.web_view_link, target: '_blank', class: 'btn-primary' %>
+              <%= link_to 'Download', file.web_content_link, target: '_blank', class: 'btn-primary' %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+    <%= link_to 'Back to Course', course_path(@course), class: 'btn-primary' %>
+  </main>
+</body>
+</html>

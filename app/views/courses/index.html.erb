@@ -1,42 +1,177 @@
-<h1>Tutti i corsi</h1>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>SkillSphere - Tutti i corsi</title>
+  <style>
+    /* General styles */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f8f8;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
-<%= form_with(url: courses_path, method: :get, local: true, class: 'search-form') do %>
-  <div class="form-group">
-    <%= label_tag :search, "Cerca per nome:" %>
-    <%= text_field_tag :search, params[:search] %>
-  </div>
-  
-  <div class="form-group">
-    <%= label_tag :category, "Filtra per categoria:" %>
-    <%= select_tag :category, options_for_select(Course.distinct.pluck(:category), params[:category]), include_blank: true %>
-  </div>
-  
-  <div class="form-group">
-    <%= label_tag :min_price, "Prezzo minimo:" %>
-    <%= number_field_tag :min_price, params[:min_price] %>
-  </div>
-  
-  <div class="form-group">
-    <%= label_tag :max_price, "Prezzo massimo:" %>
-    <%= number_field_tag :max_price, params[:max_price] %>
-  </div>
-  
-  <div class="form-group">
-    <%= label_tag :max_price, "Applica filtri" %>
-    <%= submit_tag 'Filtra' %>
-  </div>
-<% end %>
+    header {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 0;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
 
+    header h1 {
+      margin: 0;
+      font-size: 2.5em;
+    }
 
-<% if @courses.any? %>
-  <ul>
-    <% @courses.visible.each do |course| %>
-      <li>
-        <%= link_to course.title, course_path(course) %>
-        <p><%= course.description %></p>
-      </li>
+    nav {
+      margin-top: 10px;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: white;
+      margin: 0 15px;
+      padding: 5px 10px;
+      border: 2px solid white;
+      border-radius: 5px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    nav a:hover {
+      background-color: white;
+      color: #4CAF50;
+    }
+
+    main {
+      max-width: 1000px;
+      margin: 20px;
+      padding: 20px;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    h1 {
+      color: #4CAF50;
+      margin-bottom: 20px;
+    }
+
+    .search-form {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin: 10px;
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .form-group label {
+      display: block;
+      color: #333;
+      margin-bottom: 5px;
+    }
+
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) inset;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    li {
+      background-color: #f9f9f9;
+      margin: 10px 0;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    li p {
+      margin: 5px 0;
+      color: #333;
+    }
+
+    .btn-primary {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s, color 0.3s;
+      font-size: 1em;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>SkillSphere</h1>
+  </header>
+  <main>
+    <h1>Tutti i corsi</h1>
+
+    <%= form_with(url: courses_path, method: :get, local: true, class: 'search-form') do %>
+      <div class="form-group">
+        <%= label_tag :search, "Cerca per nome:" %>
+        <%= text_field_tag :search, params[:search] %>
+      </div>
+      
+      <div class="form-group">
+        <%= label_tag :category, "Filtra per categoria:" %>
+        <%= select_tag :category, options_for_select(Course.distinct.pluck(:category), params[:category]), include_blank: true %>
+      </div>
+      
+      <div class="form-group">
+        <%= label_tag :min_price, "Prezzo minimo:" %>
+        <%= number_field_tag :min_price, params[:min_price] %>
+      </div>
+      
+      <div class="form-group">
+        <%= label_tag :max_price, "Prezzo massimo:" %>
+        <%= number_field_tag :max_price, params[:max_price] %>
+      </div>
+      
+      <div class="form-group">
+        <%= submit_tag 'Filtra', class: 'btn-primary' %>
+      </div>
     <% end %>
-  </ul>
-<% else %>
-  <p>Nessun corso disponibile.</p>
-<% end %>
+
+    <% if @courses.any? %>
+      <ul>
+        <% @courses.visible.each do |course| %>
+          <li>
+            <%= link_to course.title, course_path(course), class: 'btn-primary' %>
+            <p><%= course.description %></p>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p>Nessun corso disponibile.</p>
+    <% end %>
+  </main>
+</body>
+</html>
