@@ -1,105 +1,251 @@
-<% if current_user && current_user.bought_courses.include?(@course) %>
-  <p>
-    <strong>Hai acquistato il corso</strong>
-  </p>
-<% end %>
-<p>
-  <strong>Titolo:</strong>
-  <%= @course.title %>
-</p>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>SkillSphere - Dettagli Corso</title>
+  <style>
+    /* General styles */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f8f8;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
-<p>
-  <strong>Descrizione:</strong>
-  <%= @course.description %>
-</p>
+    header {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 0;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
 
-<p>
-  <strong>Prezzo:</strong>
-  <%= @course.price %>
-</p>
+    header h1 {
+      margin: 0;
+      font-size: 2.5em;
+    }
 
-<% if current_user && current_user.bought_courses.include?(@course) %>
-  <p>
-    <strong>Google Drive Files:</strong>
-    <ul>
-      <% if @course.google_drive_file_ids.present? %>
-        <% JSON.parse(@course.google_drive_file_ids).each do |file_id| %>
+    nav {
+      margin-top: 10px;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: white;
+      margin: 0 15px;
+      padding: 5px 10px;
+      border: 2px solid white;
+      border-radius: 5px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    nav a:hover {
+      background-color: white;
+      color: #4CAF50;
+    }
+
+    main {
+      max-width: 800px;
+      margin: 20px;
+      padding: 20px;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      text-align: left;
+    }
+
+    h1, h2, h3 {
+      color: #4CAF50;
+      margin-bottom: 20px;
+    }
+
+    p {
+      color: #333;
+    }
+
+    .field {
+      margin-bottom: 15px;
+    }
+
+    .field label {
+      display: block;
+      color: #333;
+      margin-bottom: 5px;
+    }
+
+    .field input, .field textarea, .field select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) inset;
+    }
+
+    .actions {
+      margin-top: 20px;
+    }
+
+    .btn-primary, .btn-secondary, .btn-danger {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s, color 0.3s;
+      font-size: 1em;
+      text-decoration: none;
+      display: inline-block;
+      margin: 5px;
+    }
+
+    .btn-secondary {
+      background-color: #757575;
+    }
+
+    .btn-danger {
+      background-color: red;
+    }
+
+    .btn-primary:hover {
+      background-color: #45a049;
+    }
+
+    .btn-secondary:hover {
+      background-color: #616161;
+    }
+
+    .btn-danger:hover {
+      background-color: darkred;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    li {
+      background-color: #f9f9f9;
+      margin: 10px 0;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    li p {
+      margin: 5px 0;
+      color: #333;
+    }
+
+  </style>
+</head>
+<body>
+  <header>
+    <h1>SkillSphere</h1>
+    <nav>
+      <a href="<%= new_session_path %>">Login</a>
+      <a href="<%= cart_path(current_user.cart) %>">Cart</a>
+    </nav>
+  </header>
+  <main>
+    <% if current_user && current_user.bought_courses.include?(@course) %>
+      <p><strong>Hai acquistato il corso</strong></p>
+    <% end %>
+
+    <p><strong>Titolo:</strong> <%= @course.title %></p>
+    <p><strong>Descrizione:</strong> <%= @course.description %></p>
+    <p><strong>Prezzo:</strong> <%= @course.price %></p>
+
+    <% if current_user && current_user.bought_courses.include?(@course) %>
+      <p>
+        <strong>Google Drive Files:</strong>
+        <ul>
+          <% if @course.google_drive_file_ids.present? %>
+            <% JSON.parse(@course.google_drive_file_ids).each do |file_id| %>
+              <li>
+                <%= link_to "View File", "https://drive.google.com/open?id=#{file_id}", target: "_blank", class: 'btn-primary' %>
+              </li>
+            <% end %>
+          <% else %>
+            <li>Nessun Google Drive file disponibile.</li>
+          <% end %>
+        </ul>
+      </p>
+    <% else %>
+      <p>I file non sono disponibili. Devi acquistare il corso per visualizzarli.</p>
+    <% end %>
+
+    <% if current_user %>
+      <% unless current_user.bought_courses.include?(@course) %>
+        <% if current_user.cart.courses.include?(@course) %>
+          <p>Il corso è già nel carrello.</p>
+        <% else %>
+          <%= button_to 'Aggiungi al carrello', add_course_cart_path(current_user.cart.id, course_id: @course.id), method: :post, class: 'btn-primary' %>
+        <% end %>
+        <%= button_to 'Compra', purchase_course_path(@course), method: :post, class: 'btn-primary' %>
+      <% end %>
+    <% else %>
+      <p>Devi essere loggato per aggiungere il corso al carrello o acquistarlo.</p>
+    <% end %>
+
+    <%= link_to 'Modifica', edit_course_path(@course), class: 'btn-secondary' if current_seller == @course.seller %>
+    <%= link_to 'Indietro', courses_path, class: 'btn-secondary' %>
+
+    <h2>Segnala il corso</h2>
+    <%= form_with model: @report, url: reports_path, local: true do |form| %>
+      <div class="field">
+        <%= form.label :subject, "Motivo della segnalazione" %>
+        <%= form.select :subject, options_for_select(["Contenuto inappropriato", "Spam", "Violazione del copyright", "Altro"]) %>
+      </div>
+
+      <div class="field" id="other_reason_field" style="display:block;">
+        <%= form.label :description, "Descrizione" %>
+        <%= form.text_area :description %>
+      </div>
+
+      <%= form.hidden_field :course_id, value: @course.id %>
+
+      <div class="actions">
+        <%= form.submit "Invia segnalazione", class: 'btn-primary' %>
+      </div>
+    <% end %>
+
+    <h2>Recensioni</h2>
+    <% if @course.reviews.any? %>
+      <ul>
+        <% @course.reviews.each do |review| %>
           <li>
-            <%= link_to "View File", "https://drive.google.com/open?id=#{file_id}", target: "_blank" %>
+            <p><strong><%= review.account.name %></strong> ha detto:</p>
+            <p><%= review.content %></p>
+            <p>Valutazione: <%= review.rating %></p>
           </li>
         <% end %>
-      <% else %>
-        <li>Nessun Google Drive file disponibile.</li>
-      <% end %>
-    </ul>
-  </p>
-<% else %>
-  <p>I file non sono disponibili. Devi acquistare il corso per visualizzarli.</p>
-<% end %>
-
-<% if current_user %>
-  <% unless current_user.bought_courses.include?(@course) %>
-    <% if current_user.cart.courses.include?(@course) %>
-      <p>Il corso è già nel carrello.</p>
+      </ul>
     <% else %>
-      <%= button_to 'Aggiungi al carrello', add_course_cart_path(current_user.cart.id, course_id: @course.id), method: :post, class: 'btn btn-primary' %>
+      <p>Non ci sono recensioni per questo corso.</p>
     <% end %>
-    <%= button_to 'Compra', purchase_course_path(@course), method: :post, class: 'btn btn-primary' %>
-  <% end %>
-<% else %>
-  <p>Devi essere loggato per aggiungere il corso al carrello o acquistarlo.</p>
-<% end %>
 
-<%= link_to 'Modifica', edit_course_path(@course), class: 'btn btn-secondary' if current_seller == @course.seller %>
-<%= link_to 'Indietro', courses_path, class: 'btn btn-secondary' %>
-
-<h2>Segnala il corso</h2>
-<%= form_with model: @report, url: reports_path, local: true do |form| %>
-  <div class="field">
-    <%= form.label :subject, "Motivo della segnalazione" %>
-    <%= form.select :subject, options_for_select(["Contenuto inappropriato", "Spam", "Violazione del copyright", "Altro"]) %>
-  </div>
-
-  <div class="field" id="other_reason_field" style="display:block;">
-    <%= form.label :description, "Descrizione" %>
-    <%= form.text_area :description %>
-  </div>
-
-  <%= form.hidden_field :course_id, value: @course.id %>
-
-  <div class="actions">
-    <%= form.submit "Invia segnalazione" %>
-  </div>
-<% end %>
-
-<h2>Recensioni</h2>
-<% if @course.reviews.any? %>
-  <ul>
-    <% @course.reviews.each do |review| %>
-      <li>
-        <p><strong><%= review.account.name %></strong> ha detto:</p>
-        <p><%= review.content %></p>
-        <p>Valutazione: <%= review.rating %></p>
-      </li>
+    <% if current_user && current_user.bought_courses.include?(@course) %>
+      <h3>Aggiungi una recensione</h3>
+      <%= form_with model: [@course, @course.reviews.new], local: true do |form| %>
+        <div class="field">
+          <%= form.label :content, "Recensione" %>
+          <%= form.text_area :content %>
+        </div>
+        <div class="field">
+          <%= form.label :rating, "Valutazione" %>
+          <%= form.select :rating, options_for_select(1..5) %>
+        </div>
+        <div class="actions">
+          <%= form.submit "Invia", class: 'btn-primary' %>
+        </div>
+      <% end %>
     <% end %>
-  </ul>
-<% else %>
-  <p>Non ci sono recensioni per questo corso.</p>
-<% end %>
+  </main>
+</body>
+</html>
 
-<% if current_user && current_user.bought_courses.include?(@course) %>
-  <h3>Aggiungi una recensione</h3>
-  <%= form_with model: [@course, @course.reviews.new], local: true do |form| %>
-    <div class="field">
-      <%= form.label :content, "Recensione" %>
-      <%= form.text_area :content %>
-    </div>
-    <div class="field">
-      <%= form.label :rating, "Valutazione" %>
-      <%= form.select :rating, options_for_select(1..5) %>
-    </div>
-    <div class="actions">
-      <%= form.submit "Invia" %>
-    </div>
-  <% end %>
-<% end %>
