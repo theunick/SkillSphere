@@ -1,27 +1,147 @@
-<h1>Statistiche dei tuoi Corsi</h1>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>SkillSphere - Statistiche dei tuoi Corsi</title>
+  <style>
+    /* General styles */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f8f8;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
-<p><strong>Guadagni Totali:</strong> <%= number_to_currency(@total_earnings) %></p>
+    header {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 0;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
 
-<h2>Statistiche per Corso</h2>
-<table>
-  <thead>
-    <tr>
-      <th>Corso</th>
-      <th>Acquisti</th>
-      <th>Guadagni</th>
-      <th>Visite</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @courses_statistics.each do |course| %>
-      <tr>
-        <td><%= link_to course.title, course_path(course) %></td>
-        <td><%= course.purchases_count %></td>
-        <td><%= number_to_currency(course.total_earnings) %></td>
-        <td><%= course.impressionist_count %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+    header h1 {
+      margin: 0;
+      font-size: 2.5em;
+    }
 
-<%= link_to 'Indietro', accounts_path %>
+    nav {
+      margin-top: 10px;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: white;
+      margin: 0 15px;
+      padding: 5px 10px;
+      border: 2px solid white;
+      border-radius: 5px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    nav a:hover {
+      background-color: white;
+      color: #4CAF50;
+    }
+
+    main {
+      max-width: 1000px;
+      margin: 20px;
+      padding: 20px;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    h1, h2 {
+      color: #4CAF50;
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    table th, table td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    table th {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    table tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    table tr:hover {
+      background-color: #ddd;
+    }
+
+    .btn-primary {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s, color 0.3s;
+      font-size: 1em;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>SkillSphere</h1>
+    <nav>
+      <a href="<%= new_session_path %>">Login</a>
+      <a href="<%= cart_path(current_user.cart) %>">Cart</a>
+    </nav>
+  </header>
+  <main>
+    <h1>Statistiche dei tuoi Corsi</h1>
+
+    <p><strong>Guadagni Totali:</strong> <%= number_to_currency(@total_earnings) %></p>
+
+    <h2>Statistiche per Corso</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Corso</th>
+          <th>Acquisti</th>
+          <th>Guadagni</th>
+          <th>Visite</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @courses_statistics.each do |course| %>
+          <tr>
+            <td><%= link_to course.title, course_path(course) %></td>
+            <td><%= course.purchases_count %></td>
+            <td><%= number_to_currency(course.total_earnings) %></td>
+            <td><%= course.impressionist_count %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+    <%= link_to 'Indietro', accounts_path, class: 'btn-primary' %>
+  </main>
+</body>
+</html>
+
