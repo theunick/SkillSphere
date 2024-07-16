@@ -1,32 +1,161 @@
-<%= form_with(model: @report, local: true) do |form| %>
-    <% if @report.errors.any? %>
-      <div id="error_explanation">
-        <h2><%= pluralize(@report.errors.count, "error") %> prohibited this report from being saved:</h2>
-        <ul>
-          <% @report.errors.full_messages.each do |message| %>
-            <li><%= message %></li>
-          <% end %>
-        </ul>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>SkillSphere - Create Report</title>
+  <style>
+    /* General styles */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f8f8;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    header {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 0;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2.5em;
+    }
+
+    nav {
+      margin-top: 10px;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: white;
+      margin: 0 15px;
+      padding: 5px 10px;
+      border: 2px solid white;
+      border-radius: 5px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    nav a:hover {
+      background-color: white;
+      color: #4CAF50;
+    }
+
+    main {
+      max-width: 800px;
+      margin: 20px;
+      padding: 20px;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      text-align: left;
+    }
+
+    h1, h2, h3 {
+      color: #4CAF50;
+      margin-bottom: 20px;
+    }
+
+    p {
+      color: #333;
+    }
+
+    #error_explanation {
+      color: red;
+      margin-bottom: 20px;
+    }
+
+    .field {
+      margin-bottom: 15px;
+      text-align: left;
+    }
+
+    .field label {
+      display: block;
+      color: #333;
+      margin-bottom: 5px;
+    }
+
+    .field input, .field textarea, .field select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) inset;
+    }
+
+    .actions {
+      margin-top: 20px;
+    }
+
+    .btn-primary {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s, color 0.3s;
+      font-size: 1em;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>SkillSphere</h1>
+    <nav>
+      <a href="<%= new_session_path %>">Login</a>
+      <a href="<%= cart_path(current_user.cart) %>">Cart</a>
+    </nav>
+  </header>
+  <main>
+    <h1>Create Report</h1>
+
+    <%= form_with(model: @report, local: true) do |form| %>
+      <% if @report.errors.any? %>
+        <div id="error_explanation">
+          <h2><%= pluralize(@report.errors.count, "error") %> prohibited this report from being saved:</h2>
+          <ul>
+            <% @report.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+    
+      <div class="field">
+        <%= form.label :account_id %>
+        <%= form.collection_select :account_id, Account.all, :id, :name %>
+      </div>
+    
+      <div class="field">
+        <%= form.label :course_id %>
+        <%= form.collection_select :course_id, Course.all, :id, :title %>
+      </div>
+    
+      <div class="field">
+        <%= form.label :message %>
+        <%= form.text_area :message %>
+      </div>
+    
+      <div class="actions">
+        <%= form.submit 'Submit', class: 'btn-primary' %>
       </div>
     <% end %>
-  
-    <div class="field">
-      <%= form.label :account_id %>
-      <%= form.collection_select :account_id, Account.all, :id, :name %>
-    </div>
-  
-    <div class="field">
-      <%= form.label :course_id %>
-      <%= form.collection_select :course_id, Course.all, :id, :title %>
-    </div>
-  
-    <div class="field">
-      <%= form.label :message %>
-      <%= form.text_area :message %>
-    </div>
-  
-    <div class="actions">
-      <%= form.submit %>
-    </div>
-  <% end %>
+  </main>
+</body>
+</html>
+
   
