@@ -47,7 +47,7 @@
 
 ### Sviluppatore 1: Tedeschi Giuseppe
 
-* Sviluppoi del frontend
+* Sviluppo del frontend
 * Progettazione dell'interfaccia utente
 * Creazione di mockup
 
