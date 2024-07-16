@@ -4,8 +4,6 @@
   <div class="account-profile">
     <% if @account.image.present? %>
       <%= image_tag(@account.image, alt: "Profile Image", class: "profile-image") %>
-    <% else %>
-      <%= image_tag("default_profile_image.png", alt: "Default Profile Image", class: "profile-image") %>
     <% end %>
   </div>
 
