@@ -9,7 +9,10 @@ Rails.application.routes.draw do
       get 'statistics'
       get 'show_customer'
     end
-    resources :reviews, only: [:create]
+    resources :reviews do
+      resources :responses, only: [:create]
+    end
+
   end
   
 
