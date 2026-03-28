@@ -30,6 +30,7 @@ REPLICA_ID: str = os.getenv("REPLICA_ID", str(uuid.uuid4()))
 WINDOW_SIZE: int = int(os.getenv("WINDOW_SIZE", "256"))
 HOP_SIZE: int = int(os.getenv("HOP_SIZE", str(WINDOW_SIZE // 2)))
 AMPLITUDE_THRESHOLD: float = float(os.getenv("AMPLITUDE_THRESHOLD", "0.5"))
+SNR_THRESHOLD: float = float(os.getenv("SNR_THRESHOLD", "4.0"))
 SAMPLING_RATE: float = float(os.getenv("SAMPLING_RATE", "20.0"))
 
 _dsn: str = re.sub(r"postgresql\+asyncpg://", "postgresql://", DATABASE_URL)
@@ -194,9 +195,13 @@ async def _handle_measurement(msg: dict) -> None:
         return
     sensor_hop_counter[sensor_id] = 0
 
-    dominant_freq, amplitude = _run_fft(list(window))
+    result = _run_fft(list(window))
+    if result is None:
+        return
 
-    if amplitude < AMPLITUDE_THRESHOLD:
+    dominant_freq, amplitude, snr = result
+
+    if amplitude < AMPLITUDE_THRESHOLD or snr < SNR_THRESHOLD:
         return
 
     event_type = _classify(dominant_freq)
@@ -206,7 +211,8 @@ async def _handle_measurement(msg: dict) -> None:
     await _store_event(sensor_id, event_type, dominant_freq, amplitude, ts)
 
 
-def _run_fft(values: list[float]) -> tuple[float, float]:
+def _run_fft(values: list[float]) -> tuple[float, float, float] | None:
+    """Run real FFT and return (dominant_freq_hz, amplitude, snr) or None."""
     signal = np.array(values, dtype=np.float64)
     signal = signal - np.mean(signal)
 
@@ -215,15 +221,23 @@ def _run_fft(values: list[float]) -> tuple[float, float]:
 
     freqs = np.fft.rfftfreq(len(signal), d=1.0 / SAMPLING_RATE)
 
-    if len(magnitudes) > 1:
-        peak_idx = int(np.argmax(magnitudes[1:])) + 1
-    else:
-        return 0.0, 0.0
+    if len(magnitudes) <= 1:
+        return None
 
+    # Exclude DC component (index 0)
+    mags_no_dc = magnitudes[1:]
+    peak_idx = int(np.argmax(mags_no_dc)) + 1
+
+    peak_magnitude = magnitudes[peak_idx]
     dominant_freq = float(freqs[peak_idx])
-    amplitude = 2.0 * float(magnitudes[peak_idx]) / len(signal)
+    amplitude = 2.0 * float(peak_magnitude) / len(signal)
 
-    return dominant_freq, amplitude
+    # Signal-to-Noise Ratio: peak magnitude vs mean of all other components
+    other_mags = np.delete(mags_no_dc, peak_idx - 1)
+    noise_mean = float(np.mean(other_mags)) if len(other_mags) > 0 else 1.0
+    snr = float(peak_magnitude / noise_mean) if noise_mean > 0 else 0.0
+
+    return dominant_freq, amplitude, snr
 
 
 def _classify(freq: float) -> str | None:
