@@ -1,0 +1,124 @@
+version: "3.8"
+
+services:
+  simulator:
+    image: seismic-signal-simulator:multiarch_v1
+    ports:
+      - "8080:8080"
+    environment:
+      - SAMPLING_RATE_HZ=20
+      - AUTO_SHUTDOWN_ENABLED=true
+      - AUTO_SHUTDOWN_MIN_SECONDS=30
+      - AUTO_SHUTDOWN_MAX_SECONDS=90
+    networks:
+      - seismic-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: seismic
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - seismic-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  broker:
+    build: ./broker
+    environment:
+      - SIMULATOR_URL=http://simulator:8080
+    depends_on:
+      simulator:
+        condition: service_healthy
+    ports:
+      - "8001:8000"
+    networks:
+      - seismic-net
+    restart: unless-stopped
+
+  processing-1:
+    build: ./processing
+    environment:
+      - BROKER_URL=ws://broker:8000/ws/sensors
+      - SIMULATOR_URL=http://simulator:8080
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/seismic
+      - REPLICA_ID=processing-1
+    depends_on:
+      broker:
+        condition: service_started
+      db:
+        condition: service_healthy
+    networks:
+      - seismic-net
+    restart: unless-stopped
+
+  processing-2:
+    build: ./processing
+    environment:
+      - BROKER_URL=ws://broker:8000/ws/sensors
+      - SIMULATOR_URL=http://simulator:8080
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/seismic
+      - REPLICA_ID=processing-2
+    depends_on:
+      broker:
+        condition: service_started
+      db:
+        condition: service_healthy
+    networks:
+      - seismic-net
+    restart: unless-stopped
+
+  processing-3:
+    build: ./processing
+    environment:
+      - BROKER_URL=ws://broker:8000/ws/sensors
+      - SIMULATOR_URL=http://simulator:8080
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/seismic
+      - REPLICA_ID=processing-3
+    depends_on:
+      broker:
+        condition: service_started
+      db:
+        condition: service_healthy
+    networks:
+      - seismic-net
+    restart: unless-stopped
+
+  gateway:
+    build: ./gateway
+    ports:
+      - "80:8080"
+    depends_on:
+      - processing-1
+      - processing-2
+      - processing-3
+      - frontend
+    networks:
+      - seismic-net
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    networks:
+      - seismic-net
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+
+networks:
+  seismic-net:
+    driver: bridge
