@@ -14,7 +14,7 @@
             type="text"
             class="form-input"
             placeholder="e.g. sensor-01"
-            @input="resetAndFetch"
+            @input="debouncedFetch"
           />
         </div>
         <div class="filter-group">
@@ -69,14 +69,14 @@
                 </span>
               </td>
               <td>{{ ev.dominant_frequency?.toFixed(2) }}</td>
-              <td>{{ ev.amplitude?.toFixed(2) }}</td>
+              <td>{{ ev.amplitude?.toFixed(4) }}</td>
               <td class="cell-dim">{{ ev.detected_by || '--' }}</td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <div class="pagination">
+      <div class="pagination" v-if="events.length > 0 || offset > 0">
         <button class="btn" :disabled="offset === 0" @click="prevPage">Previous</button>
         <span class="pagination-info">
           {{ offset + 1 }} - {{ offset + events.length }}
@@ -96,6 +96,7 @@ const filterSensor = ref('')
 const filterType = ref('')
 const limit = 50
 const offset = ref(0)
+let debounceTimer = null
 
 function badgeClass(type) {
   switch (type) {
@@ -119,13 +120,8 @@ function formatTime(ts) {
   if (!ts) return '--'
   const d = new Date(ts)
   return d.toLocaleString('en-GB', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false,
+    year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false,
   })
 }
 
@@ -142,13 +138,21 @@ async function fetchEvents() {
     const res = await fetch(`/api/events?${params}`)
     if (res.ok) {
       const data = await res.json()
-      events.value = Array.isArray(data) ? data : data.events || []
+      events.value = Array.isArray(data) ? data : []
     }
   } catch {
     events.value = []
   } finally {
     loading.value = false
   }
+}
+
+function debouncedFetch() {
+  if (debounceTimer) clearTimeout(debounceTimer)
+  debounceTimer = setTimeout(() => {
+    offset.value = 0
+    fetchEvents()
+  }, 400)
 }
 
 function resetAndFetch() {
@@ -170,18 +174,7 @@ onMounted(fetchEvents)
 </script>
 
 <style scoped>
-.table-wrapper {
-  overflow-x: auto;
-}
-
-.result-count {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--text-muted);
-}
-
-.cell-dim {
-  color: var(--text-secondary);
-  font-size: 11px;
-}
+.table-wrapper { overflow-x: auto; }
+.result-count { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); }
+.cell-dim { color: var(--text-secondary); font-size: 11px; }
 </style>

@@ -1,15 +1,3 @@
-"""
-Processing service for the distributed seismic analysis platform.
-
-Each replica connects to:
-- Broker WebSocket for live sensor measurements
-- Simulator SSE control stream for shutdown commands
-
-It maintains per-sensor sliding windows, runs FFT analysis, classifies
-seismic events, deduplicates, and persists significant detections to
-PostgreSQL.
-"""
-
 from __future__ import annotations
 
 import asyncio
@@ -17,22 +5,20 @@ import json
 import logging
 import os
 import re
-import sys
 import uuid
 from collections import defaultdict, deque
+from contextlib import asynccontextmanager
 from datetime import datetime, timedelta, timezone
 from typing import Any
 
 import asyncpg
 import httpx
 import numpy as np
+import websockets
+import websockets.exceptions
 from fastapi import FastAPI, Query
 from fastapi.responses import JSONResponse
 from sse_starlette.sse import EventSourceResponse
-
-# ---------------------------------------------------------------------------
-# Configuration
-# ---------------------------------------------------------------------------
 
 BROKER_URL: str = os.getenv("BROKER_URL", "ws://broker:8000/ws/sensors")
 SIMULATOR_URL: str = os.getenv("SIMULATOR_URL", "http://simulator:8080")
@@ -42,30 +28,27 @@ DATABASE_URL: str = os.getenv(
 )
 REPLICA_ID: str = os.getenv("REPLICA_ID", str(uuid.uuid4()))
 WINDOW_SIZE: int = int(os.getenv("WINDOW_SIZE", "256"))
+HOP_SIZE: int = int(os.getenv("HOP_SIZE", str(WINDOW_SIZE // 2)))
 AMPLITUDE_THRESHOLD: float = float(os.getenv("AMPLITUDE_THRESHOLD", "0.5"))
 SAMPLING_RATE: float = float(os.getenv("SAMPLING_RATE", "20.0"))
 
-# asyncpg needs plain postgresql:// DSN
 _dsn: str = re.sub(r"postgresql\+asyncpg://", "postgresql://", DATABASE_URL)
 
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
 )
-logger = logging.getLogger(f"processing-{REPLICA_ID[:8]}")
+logger = logging.getLogger(f"processing-{REPLICA_ID}")
 
-# ---------------------------------------------------------------------------
-# Application state
-# ---------------------------------------------------------------------------
-
-app = FastAPI(title="Seismic Processing Service", version="1.0.0")
-
-# Per-sensor sliding window: sensor_id -> deque of float values
+# Per-sensor sliding window of float values
 sensor_windows: dict[str, deque[float]] = defaultdict(
     lambda: deque(maxlen=WINDOW_SIZE)
 )
 
-# Latest info per sensor (for /api/sensors)
+# Per-sensor sample counter for hop mechanism
+sensor_hop_counter: dict[str, int] = defaultdict(int)
+
+# Latest info per sensor
 sensor_status: dict[str, dict[str, Any]] = {}
 
 # Database connection pool
@@ -78,56 +61,47 @@ event_subscribers: list[asyncio.Queue] = []
 _background_tasks: list[asyncio.Task] = []
 
 
-# ---------------------------------------------------------------------------
-# Lifecycle
-# ---------------------------------------------------------------------------
-
-
-@app.on_event("startup")
-async def startup() -> None:
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     global db_pool
 
-    # Initialise database
     from init_db import init_db
+    for attempt in range(10):
+        try:
+            await init_db()
+            logger.info("Database schema applied")
+            break
+        except Exception:
+            logger.warning("DB init attempt %d failed, retrying in 2s...", attempt + 1)
+            await asyncio.sleep(2)
 
-    try:
-        await init_db()
-        logger.info("Database schema applied")
-    except Exception:
-        logger.exception("Failed to initialise database schema")
+    for attempt in range(10):
+        try:
+            db_pool = await asyncpg.create_pool(_dsn, min_size=2, max_size=10)
+            logger.info("Database connection pool created")
+            break
+        except Exception:
+            logger.warning("DB pool attempt %d failed, retrying in 2s...", attempt + 1)
+            await asyncio.sleep(2)
 
-    # Create the connection pool
-    try:
-        db_pool = await asyncpg.create_pool(_dsn, min_size=2, max_size=10)
-        logger.info("Database connection pool created")
-    except Exception:
-        logger.exception("Failed to create database pool")
-
-    # Launch background listeners
     _background_tasks.append(asyncio.create_task(_broker_listener()))
     _background_tasks.append(asyncio.create_task(_control_listener()))
     logger.info("Replica %s started", REPLICA_ID)
 
+    yield
 
-@app.on_event("shutdown")
-async def shutdown() -> None:
     for task in _background_tasks:
         task.cancel()
+    await asyncio.gather(*_background_tasks, return_exceptions=True)
     if db_pool:
         await db_pool.close()
     logger.info("Replica %s shut down", REPLICA_ID)
 
 
-# ---------------------------------------------------------------------------
-# Background: Broker WebSocket listener
-# ---------------------------------------------------------------------------
+app = FastAPI(title="Seismic Processing Service", version="1.0.0", lifespan=lifespan)
 
 
 async def _broker_listener() -> None:
-    """Connect to the broker WebSocket and consume sensor measurements."""
-    import websockets
-    import websockets.exceptions
-
     while True:
         try:
             logger.info("Connecting to broker at %s", BROKER_URL)
@@ -148,13 +122,7 @@ async def _broker_listener() -> None:
         await asyncio.sleep(3)
 
 
-# ---------------------------------------------------------------------------
-# Background: Simulator SSE control listener
-# ---------------------------------------------------------------------------
-
-
 async def _control_listener() -> None:
-    """Listen to the simulator control SSE stream for SHUTDOWN commands."""
     control_url = f"{SIMULATOR_URL}/api/control"
 
     while True:
@@ -163,44 +131,36 @@ async def _control_listener() -> None:
             async with httpx.AsyncClient(timeout=None) as client:
                 async with client.stream("GET", control_url) as resp:
                     logger.info("Connected to simulator control stream")
-                    buffer = ""
-                    async for chunk in resp.aiter_text():
-                        buffer += chunk
-                        while "\n" in buffer:
-                            line, buffer = buffer.split("\n", 1)
-                            line = line.strip()
-                            if not line or line.startswith(":"):
-                                continue
-                            if line.startswith("data:"):
-                                data_str = line[len("data:"):].strip()
-                            else:
-                                data_str = line
-
-                            try:
-                                data = json.loads(data_str)
-                            except json.JSONDecodeError:
-                                continue
-
-                            if data.get("command") == "SHUTDOWN":
-                                logger.warning(
-                                    "SHUTDOWN command received, terminating replica %s",
-                                    REPLICA_ID,
-                                )
-                                os._exit(0)
+                    event_type = ""
+                    data_buffer = ""
+                    async for line in resp.aiter_lines():
+                        line = line.strip()
+                        if line == "":
+                            if data_buffer:
+                                try:
+                                    data = json.loads(data_buffer)
+                                    if data.get("command") == "SHUTDOWN":
+                                        logger.warning(
+                                            "SHUTDOWN command received, terminating replica %s",
+                                            REPLICA_ID,
+                                        )
+                                        os._exit(1)
+                                except json.JSONDecodeError:
+                                    pass
+                                data_buffer = ""
+                                event_type = ""
+                            continue
+                        if line.startswith("event:"):
+                            event_type = line[len("event:"):].strip()
+                        elif line.startswith("data:"):
+                            data_str = line[len("data:"):].strip()
+                            data_buffer = data_buffer + data_str if data_buffer else data_str
         except Exception:
-            logger.warning(
-                "Control stream connection failed, retrying in 3s", exc_info=True
-            )
+            logger.warning("Control stream connection failed, retrying in 3s", exc_info=True)
         await asyncio.sleep(3)
 
 
-# ---------------------------------------------------------------------------
-# Measurement handling & FFT analysis
-# ---------------------------------------------------------------------------
-
-
 async def _handle_measurement(msg: dict) -> None:
-    """Process a single sensor measurement."""
     sensor_id: str = msg.get("sensor_id", "unknown")
     value: float | None = msg.get("value")
     timestamp_str: str | None = msg.get("timestamp")
@@ -216,7 +176,6 @@ async def _handle_measurement(msg: dict) -> None:
         else datetime.now(timezone.utc)
     )
 
-    # Update sensor status
     sensor_status[sensor_id] = {
         "sensor_id": sensor_id,
         "last_value": value,
@@ -224,13 +183,16 @@ async def _handle_measurement(msg: dict) -> None:
         "sample_count": sensor_status.get(sensor_id, {}).get("sample_count", 0) + 1,
     }
 
-    # Append to sliding window
     window = sensor_windows[sensor_id]
     window.append(value)
 
-    # Only run FFT when the window is full
     if len(window) < WINDOW_SIZE:
         return
+
+    sensor_hop_counter[sensor_id] += 1
+    if sensor_hop_counter[sensor_id] < HOP_SIZE:
+        return
+    sensor_hop_counter[sensor_id] = 0
 
     dominant_freq, amplitude = _run_fft(list(window))
 
@@ -241,71 +203,37 @@ async def _handle_measurement(msg: dict) -> None:
     if event_type is None:
         return
 
-    # Deduplication check then insert
     await _store_event(sensor_id, event_type, dominant_freq, amplitude, ts)
 
 
 def _run_fft(values: list[float]) -> tuple[float, float]:
-    """Run real FFT on a window of values and return (dominant_freq_hz, amplitude)."""
     signal = np.array(values, dtype=np.float64)
-    # Remove DC bias
     signal = signal - np.mean(signal)
 
     spectrum = np.fft.rfft(signal)
     magnitudes = np.abs(spectrum)
 
-    # Frequency bins
     freqs = np.fft.rfftfreq(len(signal), d=1.0 / SAMPLING_RATE)
 
-    # Exclude DC component (index 0)
     if len(magnitudes) > 1:
         peak_idx = int(np.argmax(magnitudes[1:])) + 1
     else:
         return 0.0, 0.0
 
     dominant_freq = float(freqs[peak_idx])
-    amplitude = float(magnitudes[peak_idx]) / len(signal)  # normalised
+    amplitude = 2.0 * float(magnitudes[peak_idx]) / len(signal)
 
     return dominant_freq, amplitude
 
 
 def _classify(freq: float) -> str | None:
-    """Classify a dominant frequency into an event type, or None if below 0.5 Hz."""
     if 0.5 <= freq < 3.0:
         return "earthquake"
     if 3.0 <= freq < 8.0:
         return "conventional_explosion"
     if freq >= 8.0:
-        return "nuclear_like_event"
+        return "nuclear_like"
     return None
-
-
-# ---------------------------------------------------------------------------
-# Database helpers
-# ---------------------------------------------------------------------------
-
-
-async def _is_duplicate(
-    conn: asyncpg.Connection,
-    sensor_id: str,
-    event_type: str,
-    ts: datetime,
-) -> bool:
-    """Return True if a similar event was already recorded within the last 10 s."""
-    row = await conn.fetchrow(
-        """
-        SELECT 1 FROM events
-        WHERE sensor_id = $1
-          AND event_type = $2
-          AND timestamp BETWEEN $3 AND $4
-        LIMIT 1
-        """,
-        sensor_id,
-        event_type,
-        ts - timedelta(seconds=10),
-        ts + timedelta(seconds=10),
-    )
-    return row is not None
 
 
 async def _store_event(
@@ -315,23 +243,17 @@ async def _store_event(
     amplitude: float,
     ts: datetime,
 ) -> None:
-    """Deduplicate and persist an event, then broadcast to SSE subscribers."""
     if db_pool is None:
         logger.warning("Database pool not available, skipping event storage")
         return
 
     async with db_pool.acquire() as conn:
-        if await _is_duplicate(conn, sensor_id, event_type, ts):
-            logger.debug(
-                "Duplicate event filtered: sensor=%s type=%s", sensor_id, event_type
-            )
-            return
-
-        await conn.execute(
+        result = await conn.execute(
             """
             INSERT INTO events (sensor_id, event_type, dominant_frequency,
                                 amplitude, timestamp, detected_by)
             VALUES ($1, $2, $3, $4, $5, $6)
+            ON CONFLICT (sensor_id, event_type, timestamp) DO NOTHING
             """,
             sensor_id,
             event_type,
@@ -340,6 +262,8 @@ async def _store_event(
             ts,
             REPLICA_ID,
         )
+        if result == "INSERT 0 0":
+            return
 
     logger.info(
         "Event stored: sensor=%s type=%s freq=%.2f amp=%.4f",
@@ -349,7 +273,6 @@ async def _store_event(
         amplitude,
     )
 
-    # Broadcast to SSE subscribers
     event_payload = {
         "sensor_id": sensor_id,
         "event_type": event_type,
@@ -368,11 +291,6 @@ async def _store_event(
         event_subscribers.remove(q)
 
 
-# ---------------------------------------------------------------------------
-# API endpoints
-# ---------------------------------------------------------------------------
-
-
 @app.get("/health")
 async def health() -> dict:
     return {"status": "ok", "replica_id": REPLICA_ID}
@@ -385,12 +303,8 @@ async def get_events(
     limit: int = Query(50, ge=1, le=1000),
     offset: int = Query(0, ge=0),
 ) -> JSONResponse:
-    """Return recent events from the database with optional filters."""
     if db_pool is None:
-        return JSONResponse(
-            status_code=503,
-            content={"error": "Database not available"},
-        )
+        return JSONResponse(status_code=503, content={"error": "Database not available"})
 
     conditions: list[str] = []
     params: list[Any] = []
@@ -443,8 +357,6 @@ async def get_events(
 
 @app.get("/api/events/stream")
 async def events_stream() -> EventSourceResponse:
-    """SSE endpoint pushing newly detected events to connected clients."""
-
     queue: asyncio.Queue = asyncio.Queue(maxsize=256)
     event_subscribers.append(queue)
 
@@ -464,6 +376,5 @@ async def events_stream() -> EventSourceResponse:
 
 @app.get("/api/sensors")
 async def get_sensors() -> JSONResponse:
-    """Return a list of known sensors and their latest status."""
     sensors = list(sensor_status.values())
     return JSONResponse(content=sensors)

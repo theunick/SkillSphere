@@ -1,18 +1,14 @@
-"""Database initialization script. Creates the events table and indexes."""
-
 import asyncio
 import os
 import re
 
 import asyncpg
 
-
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
     "postgresql+asyncpg://postgres:postgres@db:5432/seismic",
 )
 
-# asyncpg needs a plain postgresql:// DSN, strip the +asyncpg dialect
 _dsn = re.sub(r"postgresql\+asyncpg://", "postgresql://", DATABASE_URL)
 
 SCHEMA_SQL = """
@@ -24,7 +20,8 @@ CREATE TABLE IF NOT EXISTS events (
     amplitude FLOAT NOT NULL,
     timestamp TIMESTAMPTZ NOT NULL,
     detected_by VARCHAR(100),
-    created_at TIMESTAMPTZ DEFAULT NOW()
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    CONSTRAINT uq_events_sensor_type_ts UNIQUE (sensor_id, event_type, timestamp)
 );
 
 CREATE INDEX IF NOT EXISTS idx_events_sensor_time ON events(sensor_id, timestamp);
@@ -33,7 +30,6 @@ CREATE INDEX IF NOT EXISTS idx_events_type ON events(event_type);
 
 
 async def init_db() -> None:
-    """Connect to PostgreSQL and apply the schema."""
     conn: asyncpg.Connection = await asyncpg.connect(_dsn)
     try:
         await conn.execute(SCHEMA_SQL)

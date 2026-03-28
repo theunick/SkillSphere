@@ -11,7 +11,7 @@
         </div>
       </div>
       <nav class="sidebar-nav">
-        <router-link to="/" class="nav-item" exact-active-class="active">
+        <router-link to="/" class="nav-item" active-class="active" :exact="true">
           <span class="nav-icon">&#9632;</span>
           <span>Dashboard</span>
         </router-link>
@@ -32,13 +32,82 @@
       </div>
     </aside>
     <main class="main-content">
-      <router-view :sse-connected="sseConnected" @sse-status="sseConnected = $event" />
+      <router-view :live-events="liveEvents" :all-events="allEvents" :sse-connected="sseConnected" />
     </main>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 
 const sseConnected = ref(false)
+const liveEvents = ref([])
+const allEvents = ref([])
+let eventSource = null
+let reconnectTimer = null
+let uidCounter = 0
+
+function connectSSE() {
+  if (eventSource) {
+    eventSource.close()
+    eventSource = null
+  }
+
+  eventSource = new EventSource('/api/events/stream')
+
+  eventSource.onopen = () => {
+    sseConnected.value = true
+  }
+
+  eventSource.addEventListener('new_event', (msg) => {
+    try {
+      const event = JSON.parse(msg.data)
+      event._uid = ++uidCounter
+      liveEvents.value.unshift(event)
+      allEvents.value.unshift(event)
+      if (liveEvents.value.length > 200) {
+        liveEvents.value.pop()
+      }
+      if (allEvents.value.length > 500) {
+        allEvents.value.pop()
+      }
+    } catch {
+      // skip malformed
+    }
+  })
+
+  eventSource.onerror = () => {
+    sseConnected.value = false
+    if (eventSource) {
+      eventSource.close()
+      eventSource = null
+    }
+    reconnectTimer = setTimeout(connectSSE, 5000)
+  }
+}
+
+async function fetchInitialEvents() {
+  try {
+    const res = await fetch('/api/events?limit=50&offset=0')
+    if (res.ok) {
+      const data = await res.json()
+      allEvents.value = Array.isArray(data) ? data : []
+    }
+  } catch {
+    // backend may not be ready
+  }
+}
+
+onMounted(() => {
+  fetchInitialEvents()
+  connectSSE()
+})
+
+onUnmounted(() => {
+  if (reconnectTimer) clearTimeout(reconnectTimer)
+  if (eventSource) {
+    eventSource.close()
+    eventSource = null
+  }
+})
 </script>

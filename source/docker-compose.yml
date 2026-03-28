@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   simulator:
     image: seismic-signal-simulator:multiarch_v1
@@ -13,10 +11,11 @@ services:
     networks:
       - seismic-net
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/health')"]
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 10s
 
   db:
     image: postgres:16-alpine
@@ -43,10 +42,13 @@ services:
     depends_on:
       simulator:
         condition: service_healthy
-    ports:
-      - "8001:8000"
     networks:
       - seismic-net
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
     restart: unless-stopped
 
   processing-1:
@@ -58,12 +60,17 @@ services:
       - REPLICA_ID=processing-1
     depends_on:
       broker:
-        condition: service_started
+        condition: service_healthy
       db:
         condition: service_healthy
     networks:
       - seismic-net
-    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    restart: on-failure
 
   processing-2:
     build: ./processing
@@ -74,12 +81,17 @@ services:
       - REPLICA_ID=processing-2
     depends_on:
       broker:
-        condition: service_started
+        condition: service_healthy
       db:
         condition: service_healthy
     networks:
       - seismic-net
-    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    restart: on-failure
 
   processing-3:
     build: ./processing
@@ -90,12 +102,22 @@ services:
       - REPLICA_ID=processing-3
     depends_on:
       broker:
-        condition: service_started
+        condition: service_healthy
       db:
         condition: service_healthy
     networks:
       - seismic-net
-    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    restart: on-failure
+
+  frontend:
+    build: ./frontend
+    networks:
+      - seismic-net
 
   gateway:
     build: ./gateway
@@ -106,12 +128,6 @@ services:
       - processing-2
       - processing-3
       - frontend
-    networks:
-      - seismic-net
-    restart: unless-stopped
-
-  frontend:
-    build: ./frontend
     networks:
       - seismic-net
     restart: unless-stopped
